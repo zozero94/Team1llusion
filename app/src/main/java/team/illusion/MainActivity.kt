@@ -24,32 +24,44 @@ class MainActivity : ComponentActivity() {
         setContent {
             Team1llusionTheme {
                 // A surface container using the 'background' color from the theme
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    TextButton(onClick = { startActivity(AdminActivity.getIntent(this@MainActivity)) }) {
-                        Text(text = "관리자")
+                MainScreen() { event ->
+                    when (event) {
+                        MainEvent.ClickAdmin -> startActivity(AdminActivity.getIntent(this@MainActivity))
+                        MainEvent.ClickMember -> startActivity(MemberActivity.getIntent(this@MainActivity))
                     }
-                    TextButton(onClick = { startActivity(MemberActivity.getIntent(this@MainActivity)) }) {
-                        Text(text = "회원")
-                    }
+
                 }
             }
         }
     }
+
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun MainScreen(event: (MainEvent) -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        TextButton(onClick = { event(MainEvent.ClickAdmin) }) {
+            Text(text = "관리자")
+        }
+        TextButton(onClick = { event(MainEvent.ClickMember) }) {
+            Text(text = "회원")
+        }
+    }
+}
+
+sealed interface MainEvent {
+    object ClickAdmin : MainEvent
+    object ClickMember : MainEvent
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     Team1llusionTheme {
-        Greeting("Android")
+        MainScreen {}
     }
 }

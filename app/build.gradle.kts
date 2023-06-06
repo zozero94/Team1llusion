@@ -5,7 +5,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("kotlinx-serialization")
     id("kotlin-parcelize")
-    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -39,7 +39,6 @@ android {
     }
     buildFeatures {
         compose = true
-        viewBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -50,9 +49,6 @@ android {
 dependencies {
 
     implementation(project(":data"))
-    implementation(platform(Dep.Firebase.bom))
-    implementation(Dep.Firebase.analytics)
-    implementation(Dep.Firebase.database)
 
     implementation(Dep.Android.appCompat)
     implementation(Dep.Android.startUp)
@@ -70,8 +66,6 @@ dependencies {
     implementation(Dep.Kotlin.Coroutine.coroutineAndroid)
     implementation(Dep.Kotlin.Coroutine.coroutineCore)
     implementation(Dep.Kotlin.reflect)
-    implementation(Dep.Square.retrofit)
-    implementation(Dep.Square.okhttp3Logging)
 
     implementation(Dep.Square.timber)
     implementation(Dep.Square.serializationConverter)

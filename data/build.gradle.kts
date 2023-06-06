@@ -5,6 +5,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("kotlinx-serialization")
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -39,4 +40,15 @@ dependencies {
     kapt(Dep.Dagger.compiler)
     implementation(Dep.inject)
 
+    implementation(platform(Dep.Firebase.bom))
+    implementation(Dep.Firebase.analytics)
+    implementation(Dep.Firebase.database)
+
+    implementation(Dep.Square.retrofit)
+    implementation(Dep.Square.okhttp3Logging)
+    implementation(Dep.Square.timber)
+
+    implementation(Dep.Kotlin.Serialization.serialization)
+    kapt(Dep.Kotlin.Serialization.serializationPlugin)
+    implementation(Dep.Square.serializationConverter)
 }

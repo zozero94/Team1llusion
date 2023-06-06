@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "728530682967",
+    "firebase_url": "https://team1llusion-default-rtdb.firebaseio.com",
     "project_id": "team1llusion",
     "storage_bucket": "team1llusion.appspot.com"
   },
@@ -10,6 +11,35 @@
         "mobilesdk_app_id": "1:728530682967:android:8466904db564987b2c8f12",
         "android_client_info": {
           "package_name": "team.illusion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728530682967-1uvr5tl0jbmvtubbsfu92ll294is073l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoF6s30AS1O1n3zeWw1DEyyzjlMJ0Ipvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "728530682967-1uvr5tl0jbmvtubbsfu92ll294is073l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728530682967:android:e24833a5a5d4fbbb2c8f12",
+        "android_client_info": {
+          "package_name": "team.illusion.data"
         }
       },
       "oauth_client": [
