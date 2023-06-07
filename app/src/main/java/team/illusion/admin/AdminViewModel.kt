@@ -37,13 +37,18 @@ class AdminViewModel @Inject constructor(
     }
 
     suspend fun changePassword(password: String) {
-        adminRepository.changePassword(password)
-    }
-
-    suspend fun changePasswordState(usePassword: Boolean) {
+        val usePassword = uiState.value?.usePassword ?: false
         adminRepository.updateUsePassword(usePassword)
         if (!usePassword) {
             adminRepository.changePassword("")
+        } else {
+            adminRepository.changePassword(password)
+        }
+    }
+
+    fun changePasswordState(usePassword: Boolean) {
+        _uiState.update {
+            it?.copy(password = "", usePassword = usePassword)
         }
     }
 

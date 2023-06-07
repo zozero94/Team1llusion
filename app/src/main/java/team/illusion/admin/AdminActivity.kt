@@ -38,9 +38,7 @@ class AdminActivity : ComponentActivity() {
                             AdminScreen(uiState) { adminEvent ->
                                 when (adminEvent) {
                                     is AdminEvent.TogglePassword -> {
-                                        lifecycleScope.launch {
-                                            adminViewModel.changePasswordState(adminEvent.isEnable)
-                                        }
+                                        adminViewModel.changePasswordState(adminEvent.isEnable)
                                     }
                                     is AdminEvent.OverPasswordLimit -> {
                                         Toast.makeText(
