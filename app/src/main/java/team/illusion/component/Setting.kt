@@ -1,6 +1,8 @@
 package team.illusion.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +39,22 @@ fun SettingToggle(text: String, checked: Boolean, onCheckedChange: (Boolean) -> 
         )
     }
 }
+
+@Composable
+fun SettingRadio(text: String, checked: Boolean, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = text, fontWeight = FontWeight.Bold)
+        RadioButton(selected = checked, onClick = onClick)
+    }
+}
+
 
 @Composable
 fun PasswordTextField(
@@ -68,13 +87,58 @@ fun PasswordTextField(
 }
 
 @Composable
-fun ConfirmButton(text: String, onClick: () -> Unit) {
+fun NormalTextField(text: String, label: String, keyboardType: KeyboardType, onValueChange: (String) -> Unit) {
+
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth(),
+        value = text,
+        onValueChange = onValueChange,
+        label = { Text(text = label) },
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color.LightGray,
+            focusedIndicatorColor = Color.Transparent
+        ),
+        trailingIcon = {
+            IconButton(onClick = { onValueChange("") }) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null)
+            }
+        },
+        shape = RoundedCornerShape(8.dp),
+        maxLines = 1,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+    )
+}
+
+@Composable
+fun ConfirmButton(text: String, isEnable: Boolean = true, onClick: () -> Unit) {
     TextButton(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
         colors = ButtonDefaults.textButtonColors(backgroundColor = Color.LightGray),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        enabled = isEnable
     ) {
         Text(text = text)
+    }
+}
+
+@Composable
+fun SettingItem(text: String, click: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .clickable(onClick = click)
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = text, fontWeight = FontWeight.Bold)
+        IconButton(onClick = click) {
+            Image(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
+
+        }
     }
 }

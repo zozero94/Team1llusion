@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import team.illusion.admin.member.register.MemberRegisterActivity
 import team.illusion.ui.theme.Team1llusionTheme
 
 @AndroidEntryPoint
@@ -54,6 +55,12 @@ class AdminActivity : ComponentActivity() {
                                             finish()
                                         }
                                     }
+                                    AdminEvent.ClickMemberRegister -> {
+                                        startActivity(MemberRegisterActivity.getIntent(this))
+                                    }
+                                    AdminEvent.ClickMemberSearch -> {
+//                                        startActivity()
+                                    }
                                 }
                             }
                         }
@@ -78,6 +85,8 @@ class AdminActivity : ComponentActivity() {
 }
 
 sealed interface AdminEvent {
+    object ClickMemberRegister : AdminEvent
+    object ClickMemberSearch : AdminEvent
     data class TogglePassword(val isEnable: Boolean) : AdminEvent
     data class OverPasswordLimit(val limit: Int) : AdminEvent
 

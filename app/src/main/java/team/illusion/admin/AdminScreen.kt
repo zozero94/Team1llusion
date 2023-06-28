@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import team.illusion.component.ConfirmButton
 import team.illusion.component.PasswordTextField
+import team.illusion.component.SettingItem
 import team.illusion.component.SettingToggle
 
 val LocalMaxPasswordCount = compositionLocalOf { 10 }
@@ -35,6 +36,8 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
             modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            SettingItem("회원 등록") { event(AdminEvent.ClickMemberRegister) }
+            SettingItem("회원 조회") { event(AdminEvent.ClickMemberSearch) }
             SettingToggle(
                 text = "비밀번호 설정",
                 checked = uiState.usePassword,

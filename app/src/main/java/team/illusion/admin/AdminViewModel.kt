@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import team.illusion.data.AdminRepository
+import team.illusion.data.repository.AdminRepository
 import javax.inject.Inject
 
 @HiltViewModel
