@@ -30,35 +30,35 @@ fun MemberSearchScreen(
     ) {
         SearchTextField(query = uiState.query, onValueChange = queryChanged)
         Spacer(modifier = Modifier.height(16.dp))
-        MemberColumn(query = uiState.query, members = uiState.members, searched = uiState.searched) {
+        MemberColumn(members = if (uiState.query.isEmpty()) uiState.members else uiState.searched) {
 
         }
     }
 }
 
 @Composable
-private fun MemberColumn(
-    query: String,
+fun MemberColumn(
+    modifier: Modifier = Modifier,
     members: List<Member>,
-    searched: List<Member>,
     clickMember: (Member) -> Unit
 ) {
     LazyColumn(
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (members.isEmpty() && searched.isEmpty()) {
+        if (members.isEmpty()) {
             item {
                 Text(modifier = Modifier.fillMaxWidth(), text = "데이터 없음", textAlign = TextAlign.Center)
             }
         } else {
-            items(if (query.isEmpty()) members else searched) { member ->
+            items(members) { member ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
-                        .padding(8.dp)
-                        .clickable { clickMember(member) },
+                        .clickable { clickMember(member) }
+                        .padding(8.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
                     Image(imageVector = Icons.Default.Person, contentDescription = null)

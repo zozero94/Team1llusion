@@ -1,9 +1,6 @@
 package team.illusion.data
 
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -93,6 +90,21 @@ suspend inline fun <reified T> DatabaseReference.awaitGet(): T? = suspendCancell
 }
 
 suspend inline fun <reified T> DatabaseReference.awaitGetList(): List<T> = suspendCancellableCoroutine { cont ->
+    val listener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val parse = snapshot.children.mapNotNull { it.getValue(T::class.java) }
+            cont.resume(parse)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            cont.cancel()
+        }
+    }
+    addListenerForSingleValueEvent(listener)
+    cont.invokeOnCancellation { removeEventListener(listener) }
+}
+
+suspend inline fun <reified T> Query.awaitGetList(): List<T> = suspendCancellableCoroutine { cont ->
     val listener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val parse = snapshot.children.mapNotNull { it.getValue(T::class.java) }

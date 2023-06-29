@@ -30,4 +30,12 @@ class MemberRepository @Inject constructor(
         memberReference.child(member.id)
     }
 
+    suspend fun getMemberByLastPhoneNumber(memberIdentifier: String): List<Member> {
+        return memberReference.endAt(memberIdentifier).awaitGetList()
+    }
+
+    fun checkIn(member: Member) {
+
+    }
+
 }

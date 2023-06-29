@@ -51,7 +51,7 @@ class MemberRegisterViewModel @Inject constructor(
 
     suspend fun register() {
         val member = with(uiState.value) {
-            Member(name, phone, requireNotNull(selectedOptions?.text))
+            Member(name = name, phone = phone, option = requireNotNull(selectedOptions?.text))
         }
         memberRepository.registerMember(member)
     }
