@@ -36,6 +36,9 @@ fun MemberInfoScreen(
         skipHalfExpanded = true
     )
     var selectedOption by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.option) }
+    var enableExtraOption by rememberSaveable(uiState.editMember) {
+        mutableStateOf(uiState.editMember?.enableExtraOption ?: false)
+    }
 
     ModalBottomSheetLayout(
         modifier = modifier,
@@ -43,9 +46,13 @@ fun MemberInfoScreen(
         sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
         sheetContent = {
             OptionBottomSheet(
+                enableExtraOption = enableExtraOption,
                 onClickConfirm = {
                     selectedOption = it
                     scope.launch { sheetState.hide() }
+                },
+                onClickExtraOption = {
+                    enableExtraOption = it
                 }
             )
         },
@@ -53,6 +60,7 @@ fun MemberInfoScreen(
             MemberInfoScreen(
                 uiState = uiState,
                 selectedOption = selectedOption,
+                enableExtraOption = enableExtraOption,
                 event = event,
                 sheetState = sheetState
             )
@@ -65,6 +73,7 @@ fun MemberInfoScreen(
 private fun MemberInfoScreen(
     uiState: MemberInfoUiState,
     selectedOption: Options?,
+    enableExtraOption: Boolean,
     event: (MemberInfoEvent) -> Unit,
     sheetState: ModalBottomSheetState
 ) {
@@ -75,9 +84,7 @@ private fun MemberInfoScreen(
     var address by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.address.orEmpty()) }
     var comment by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.comment.orEmpty()) }
     var sex by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.sex ?: Sex.Male) }
-    var enableExtraCount by rememberSaveable(uiState.editMember) {
-        mutableStateOf(uiState.editMember?.enableExtraOption ?: false)
-    }
+
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
     if (openDialog) {
@@ -139,9 +146,6 @@ private fun MemberInfoScreen(
                 keyboard?.hide()
                 scope.launch { sheetState.show() }
             }
-            SettingRadio(text = "추가 횟수", checked = enableExtraCount) {
-                enableExtraCount = !enableExtraCount
-            }
         }
         Column {
             if (uiState.editMember != null) {
@@ -166,7 +170,7 @@ private fun MemberInfoScreen(
                         address = address,
                         comment = comment,
                         sex = sex,
-                        enableExtraOption = enableExtraCount,
+                        enableExtraOption = enableExtraOption,
                         selectedOption = requireNotNull(selectedOption)
                     )
                 )
@@ -176,13 +180,18 @@ private fun MemberInfoScreen(
 }
 
 @Composable
-private fun OptionBottomSheet(onClickConfirm: (Options) -> Unit) {
+private fun OptionBottomSheet(
+    enableExtraOption: Boolean,
+    onClickConfirm: (Options) -> Unit,
+    onClickExtraOption: (Boolean) -> Unit
+) {
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         var selected by rememberSaveable { mutableStateOf<Options?>(null) }
         Image(painter = painterResource(id = R.mipmap.account), contentDescription = null)
+        ExtraOptionRadio(enableExtraOption,onClickExtraOption)
         Options.values().forEach {
             SettingRadio(text = it.name, checked = selected == it) {
                 selected = it

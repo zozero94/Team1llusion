@@ -59,6 +59,34 @@ fun SettingRadio(text: String, checked: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
+fun ExtraOptionRadio(enableExtraOption: Boolean, onClick: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "1달")
+            RadioButton(selected = !enableExtraOption, onClick = { onClick(false) })
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "3달")
+            RadioButton(selected = enableExtraOption, onClick = { onClick(true) })
+        }
+    }
+}
+
+@Composable
 fun SexRadio(sex: Sex, onClick: (Sex) -> Unit) {
     Row(
         modifier = Modifier
