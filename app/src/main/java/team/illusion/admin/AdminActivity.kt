@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import team.illusion.admin.member.register.MemberRegisterActivity
+import team.illusion.admin.member.search.MemberSearchActivity
 import team.illusion.ui.theme.Team1llusionTheme
 
 @AndroidEntryPoint
@@ -59,7 +60,7 @@ class AdminActivity : ComponentActivity() {
                                         startActivity(MemberRegisterActivity.getIntent(this))
                                     }
                                     AdminEvent.ClickMemberSearch -> {
-//                                        startActivity()
+                                        startActivity(MemberSearchActivity.getIntent(this))
                                     }
                                 }
                             }

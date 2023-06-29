@@ -23,7 +23,9 @@ import team.illusion.data.DateManager
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
-fun MemberRegisterScreen(uiState: MemberRegisterUiState, event: (MemberRegisterEvent) -> Unit) {
+fun MemberRegisterScreen(
+    modifier: Modifier, uiState: MemberRegisterUiState, event: (MemberRegisterEvent) -> Unit
+) {
     val keyboard = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
@@ -33,6 +35,7 @@ fun MemberRegisterScreen(uiState: MemberRegisterUiState, event: (MemberRegisterE
 
 
     ModalBottomSheetLayout(
+        modifier = modifier,
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
         sheetContent = {
@@ -99,12 +102,13 @@ private fun OptionBottomSheet(onClickConfirm: (Options) -> Unit) {
 @Composable
 private fun Preview() {
     MemberRegisterScreen(
-        MemberRegisterUiState(
+        modifier = Modifier,
+        uiState = MemberRegisterUiState(
             today = DateManager.today,
             selectedOptions = null,
             name = "zero",
             phone = "01036108845",
             canRegister = false
-        ), {}
-    )
+        )
+    ) {}
 }

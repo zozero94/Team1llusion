@@ -8,6 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -50,8 +51,58 @@ inline fun <reified T> DatabaseReference.bindDataChanged(): Flow<T> {
 
 }
 
+inline fun <reified T> DatabaseReference.bindDataListChanged(): Flow<List<T>> {
+    return callbackFlow {
+        val eventListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val result = snapshot.children.mapNotNull { it.getValue(T::class.java) }
+                trySend(result)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                cancel(error.message, Exception(error.details))
+            }
+
+        }
+        addValueEventListener(eventListener)
+        awaitClose { removeEventListener(eventListener) }
+    }
+
+}
+
+
 suspend inline fun <reified T> DatabaseReference.awaitSetValue(value: T) {
     return suspendCoroutine { con ->
         setValue(value).addOnCompleteListener { con.resume(Unit) }
     }
+}
+
+suspend inline fun <reified T> DatabaseReference.awaitGet(): T? = suspendCancellableCoroutine { cont ->
+    val listener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val parse = snapshot.getValue(T::class.java)
+            cont.resume(parse)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            cont.cancel()
+        }
+    }
+    addListenerForSingleValueEvent(listener)
+    cont.invokeOnCancellation { removeEventListener(listener) }
+}
+
+suspend inline fun <reified T> DatabaseReference.awaitGetList(): List<T> = suspendCancellableCoroutine { cont ->
+    val listener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val parse = snapshot.children.mapNotNull { it.getValue(T::class.java) }
+            cont.resume(parse)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            cont.cancel()
+        }
+    }
+    addListenerForSingleValueEvent(listener)
+    cont.invokeOnCancellation { removeEventListener(listener) }
 }

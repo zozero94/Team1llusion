@@ -13,6 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -108,6 +109,33 @@ fun NormalTextField(text: String, label: String, keyboardType: KeyboardType, onV
         maxLines = 1,
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+    )
+}
+
+@Composable
+fun SearchTextField(query: String, onValueChange: (String) -> Unit) {
+    TextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = query,
+        onValueChange = onValueChange,
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color.LightGray,
+            focusedIndicatorColor = Color.Transparent
+        ),
+        trailingIcon = {
+            IconButton(
+                enabled = query.isNotEmpty(),
+                onClick = { onValueChange("") }
+            ) {
+                Icon(
+                    imageVector = if (query.isEmpty()) Icons.Default.Search else Icons.Default.Close,
+                    contentDescription = null
+                )
+            }
+        },
+        shape = RoundedCornerShape(8.dp),
+        maxLines = 1,
+        singleLine = true,
     )
 }
 
