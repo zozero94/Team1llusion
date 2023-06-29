@@ -53,8 +53,11 @@ class MainActivity : ComponentActivity() {
                             VerifyEvent.Duplicate -> {
                                 sheetState.show()
                             }
-                            VerifyEvent.Error -> {
-                                Toast.makeText(this@MainActivity, "에러", Toast.LENGTH_SHORT).show()
+                            VerifyEvent.Empty -> {
+                                Toast.makeText(this@MainActivity, "데이터 없음", Toast.LENGTH_SHORT).show()
+                            }
+                            is VerifyEvent.Error -> {
+                                Toast.makeText(this@MainActivity, "${verifyEvent.t}", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -73,7 +76,7 @@ class MainActivity : ComponentActivity() {
                     MainScreen(uiState.memberIdentifier) { event ->
                         when (event) {
                             MainEvent.ClickAdmin -> startActivity(AdminActivity.getIntent(this@MainActivity))
-                            MainEvent.ClickMember -> viewModel.verify()
+                            MainEvent.Confirm -> viewModel.verify()
                             is MainEvent.ChangeMember -> viewModel.updateId(event.id)
                         }
 
@@ -93,7 +96,8 @@ data class MainUiState(
 sealed interface VerifyEvent {
     object Confirm : VerifyEvent
     object Duplicate : VerifyEvent
-    object Error : VerifyEvent
+    data class Error(val t: Throwable) : VerifyEvent
+    object Empty : VerifyEvent
 }
 
 @Composable
@@ -122,14 +126,14 @@ fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
             onValueChange = { event(MainEvent.ChangeMember(it)) }
         )
         ConfirmButton(text = "확인") {
-            event(MainEvent.ClickMember)
+            event(MainEvent.Confirm)
         }
     }
 }
 
 sealed interface MainEvent {
     object ClickAdmin : MainEvent
-    object ClickMember : MainEvent
+    object Confirm : MainEvent
     data class ChangeMember(val id: String) : MainEvent
 }
 

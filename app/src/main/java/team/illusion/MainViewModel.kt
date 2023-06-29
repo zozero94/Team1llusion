@@ -31,10 +31,10 @@ class MainViewModel @Inject constructor(
     fun verify() {
         viewModelScope.launch {
             runCatching {
-                val members = memberRepository.getMemberByLastPhoneNumber(uiState.value.memberIdentifier)
+                val members = memberRepository.getMembers(uiState.value.memberIdentifier).first()
                 when (members.size) {
                     0 -> {
-                        _verifyEvent.emit(VerifyEvent.Error)
+                        _verifyEvent.emit(VerifyEvent.Empty)
                     }
                     1 -> {
                         _verifyEvent.emit(VerifyEvent.Confirm)
@@ -45,6 +45,8 @@ class MainViewModel @Inject constructor(
                         _uiState.update { it.copy(members = members) }
                     }
                 }
+            }.onFailure {
+                _verifyEvent.emit(VerifyEvent.Error(it))
             }
 
         }

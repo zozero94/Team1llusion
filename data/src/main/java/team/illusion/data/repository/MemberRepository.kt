@@ -1,7 +1,9 @@
 package team.illusion.data.repository
 
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import team.illusion.data.awaitGetList
 import team.illusion.data.awaitSetValue
 import team.illusion.data.bindDataListChanged
@@ -34,8 +36,15 @@ class MemberRepository @Inject constructor(
         memberReference.child(member.id)
     }
 
-    suspend fun getMemberByLastPhoneNumber(memberIdentifier: String): List<Member> {
-        return memberReference.endAt(memberIdentifier).awaitGetList()
+    fun getMembers(phoneNumber: String): Flow<List<Member>> {
+        return memberReference.snapshots.map { snapshot ->
+            snapshot.children
+                .mapNotNull {
+                    it.getValue(Member::class.java)
+                }.filter {
+                    it.phone.contains(phoneNumber)
+                }
+        }
     }
 
     fun checkIn(member: Member) {
