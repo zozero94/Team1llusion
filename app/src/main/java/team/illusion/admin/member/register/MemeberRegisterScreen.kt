@@ -60,7 +60,12 @@ fun MemberRegisterScreen(
                     NormalTextField(text = uiState.name, label = "이름", keyboardType = KeyboardType.Text) {
                         event(MemberRegisterEvent.ChangeName(it))
                     }
-                    NormalTextField(text = uiState.phone, label = "전화번호", keyboardType = KeyboardType.Phone) {
+                    NormalTextField(
+                        text = uiState.phone,
+                        label = "전화번호",
+                        keyboardType = KeyboardType.Phone,
+                        isError = !uiState.phoneVerify
+                    ) {
                         event(MemberRegisterEvent.ChangePhone(it))
                     }
                     SettingItem(text = "기간 설정 ${uiState.selectedOptions?.text.orEmpty()}") {
@@ -108,6 +113,7 @@ private fun Preview() {
             selectedOptions = null,
             name = "zero",
             phone = "01036108845",
+            phoneVerify = false,
             canRegister = false
         )
     ) {}

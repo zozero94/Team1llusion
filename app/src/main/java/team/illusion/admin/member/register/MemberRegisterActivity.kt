@@ -10,9 +10,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import team.illusion.ui.theme.Team1llusionTheme
 
 enum class Options(
@@ -44,11 +42,15 @@ class MemberRegisterActivity : ComponentActivity() {
                         is MemberRegisterEvent.ChangePhone -> viewModel.changePhone(event.phone)
                         is MemberRegisterEvent.ChangeOption -> viewModel.changeOption(event.options)
                         MemberRegisterEvent.Register -> {
-                            lifecycleScope.launch {
-                                viewModel.register()
-                                Toast.makeText(this@MemberRegisterActivity, "등록되었습니다.", Toast.LENGTH_SHORT).show()
-                                finish()
-                            }
+                            viewModel.register(
+                                onCompletion = {
+                                    Toast.makeText(this@MemberRegisterActivity, "등록되었습니다.", Toast.LENGTH_SHORT).show()
+                                    finish()
+                                },
+                                onError = { message ->
+                                    Toast.makeText(this@MemberRegisterActivity, message, Toast.LENGTH_SHORT).show()
+                                }
+                            )
                         }
                     }
                 }
@@ -68,6 +70,7 @@ data class MemberRegisterUiState(
     val selectedOptions: Options?,
     val name: String,
     val phone: String,
+    val phoneVerify: Boolean,
     val canRegister: Boolean
 )
 

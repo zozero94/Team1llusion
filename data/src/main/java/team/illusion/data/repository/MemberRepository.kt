@@ -22,6 +22,10 @@ class MemberRepository @Inject constructor(
         return memberReference.awaitGetList()
     }
 
+    suspend fun findMember(member: Member): Member? {
+        return getMembers().find { it.phone == member.phone || it.id == member.id }
+    }
+
     fun bindMembers(): Flow<List<Member>> {
         return memberReference.bindDataListChanged()
     }

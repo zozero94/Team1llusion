@@ -88,7 +88,13 @@ fun PasswordTextField(
 }
 
 @Composable
-fun NormalTextField(text: String, label: String, keyboardType: KeyboardType, onValueChange: (String) -> Unit) {
+fun NormalTextField(
+    text: String,
+    label: String,
+    keyboardType: KeyboardType,
+    isError: Boolean = false,
+    onValueChange: (String) -> Unit
+) {
 
     TextField(
         modifier = Modifier
@@ -109,6 +115,7 @@ fun NormalTextField(text: String, label: String, keyboardType: KeyboardType, onV
         maxLines = 1,
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        isError = isError,
     )
 }
 
