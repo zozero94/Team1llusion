@@ -1,4 +1,4 @@
-package team.illusion.admin
+package team.illusion.ui.admin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -13,8 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import team.illusion.component.ConfirmButton
-import team.illusion.component.PasswordTextField
+import team.illusion.ui.component.ConfirmButton
+import team.illusion.ui.component.PasswordTextField
 
 @Composable
 fun LockScreen(isFail: Boolean, unLock: (password: String) -> Unit) {

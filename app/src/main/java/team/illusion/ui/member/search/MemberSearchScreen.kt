@@ -1,6 +1,5 @@
-package team.illusion.admin.member.search
+package team.illusion.ui.member.search
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,16 +7,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import team.illusion.component.SearchTextField
 import team.illusion.data.model.Member
+import team.illusion.data.model.displayRemainCount
+import team.illusion.data.model.isExpireDate
+import team.illusion.ui.component.SearchTextField
 
 @Composable
 fun MemberSearchScreen(
@@ -67,16 +69,36 @@ fun MemberColumn(
                         .padding(8.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Image(imageVector = Icons.Default.Person, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Id : ${member.id}")
                     Text(text = "이름 : ${member.name}")
                     Text(text = "성별 : ${member.sex}")
                     Text(text = "휴대폰 : ${member.phone}")
                     Text(text = "주소 : ${member.address}")
                     Text(text = "옵션 : ${member.option}")
-                    Text(text = "남은 기간 : ${member.endDate}")
-                    Text(text = "남은 횟수 : ${if (member.remainCount == null) "INFINITE" else member.remainCount}")
+                    Text(
+                        text = buildAnnotatedString {
+                            append("남은 기간 : ")
+                            if (member.isExpireDate()) {
+                                withStyle(SpanStyle(Color.Red)) {
+                                    append(member.endDate)
+                                }
+                            } else {
+                                append(member.endDate)
+                            }
+                        }
+                    )
+                    Text(
+                        text = buildAnnotatedString {
+                            append("남은 횟수 : ")
+                            if (member.remainCount == 0) {
+                                withStyle(SpanStyle(Color.Red)) {
+                                    append("${member.remainCount}")
+                                }
+                            } else {
+                                append(member.displayRemainCount())
+                            }
+                        }
+                    )
                     Text(text = "기타 : ${member.comment}")
                 }
             }

@@ -1,4 +1,4 @@
-package team.illusion.admin
+package team.illusion.ui.admin
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -9,10 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import team.illusion.component.ConfirmButton
-import team.illusion.component.PasswordTextField
-import team.illusion.component.SettingItem
-import team.illusion.component.SettingToggle
+import team.illusion.ui.component.ConfirmButton
+import team.illusion.ui.component.PasswordTextField
+import team.illusion.ui.component.SettingItem
+import team.illusion.ui.component.SettingToggle
 
 val LocalMaxPasswordCount = compositionLocalOf { 10 }
 

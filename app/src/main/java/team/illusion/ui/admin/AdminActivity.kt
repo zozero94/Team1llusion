@@ -1,4 +1,4 @@
-package team.illusion.admin
+package team.illusion.ui.admin
 
 import android.content.Context
 import android.content.Intent
@@ -17,8 +17,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import team.illusion.admin.member.info.MemberInfoActivity
-import team.illusion.admin.member.search.MemberSearchActivity
+import team.illusion.ui.member.info.MemberInfoActivity
+import team.illusion.ui.member.search.MemberSearchActivity
 import team.illusion.ui.theme.Team1llusionTheme
 
 @AndroidEntryPoint

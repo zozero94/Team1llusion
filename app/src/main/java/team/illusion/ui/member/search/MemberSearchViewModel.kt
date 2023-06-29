@@ -1,4 +1,4 @@
-package team.illusion.admin.member.search
+package team.illusion.ui.member.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

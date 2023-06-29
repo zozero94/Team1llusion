@@ -1,4 +1,4 @@
-package team.illusion.admin.member.info
+package team.illusion.ui.member.info
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,10 +17,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import team.illusion.R
-import team.illusion.component.*
 import team.illusion.data.DateManager
 import team.illusion.data.model.Options
 import team.illusion.data.model.Sex
+import team.illusion.ui.component.*
 
 
 @Composable
@@ -144,14 +144,16 @@ private fun MemberInfoScreen(
             }
         }
         Column {
-            ConfirmButton(
-                text = "삭제",
-                buttonColors = ButtonDefaults.textButtonColors(
-                    backgroundColor = Color.LightGray,
-                    contentColor = Color.Red
-                )
-            ) {
-                openDialog = true
+            if (uiState.editMember != null) {
+                ConfirmButton(
+                    text = "삭제",
+                    buttonColors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.LightGray,
+                        contentColor = Color.Red
+                    )
+                ) {
+                    openDialog = true
+                }
             }
             ConfirmButton(
                 text = "확인",

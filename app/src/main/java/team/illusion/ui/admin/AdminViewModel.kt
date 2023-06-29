@@ -1,4 +1,4 @@
-package team.illusion.admin
+package team.illusion.ui.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

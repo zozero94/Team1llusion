@@ -1,4 +1,4 @@
-package team.illusion.admin.member.info
+package team.illusion.ui.member.info
 
 import android.content.Context
 import android.content.Intent

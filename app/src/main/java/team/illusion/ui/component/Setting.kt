@@ -1,4 +1,4 @@
-package team.illusion.component
+package team.illusion.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

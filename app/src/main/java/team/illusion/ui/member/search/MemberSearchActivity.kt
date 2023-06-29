@@ -1,4 +1,4 @@
-package team.illusion.admin.member.search
+package team.illusion.ui.member.search
 
 import android.content.Context
 import android.content.Intent
@@ -9,8 +9,8 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import team.illusion.admin.member.info.MemberInfoActivity
 import team.illusion.data.model.Member
+import team.illusion.ui.member.info.MemberInfoActivity
 import team.illusion.ui.theme.Team1llusionTheme
 
 @AndroidEntryPoint

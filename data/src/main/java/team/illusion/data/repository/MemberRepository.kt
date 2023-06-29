@@ -78,8 +78,10 @@ class MemberRepository @Inject constructor(
         }
     }
 
-    fun checkIn(member: Member) {
-
+    suspend fun checkIn(member: Member) {
+        val remainCount = member.remainCount?.minus(1)
+        if (remainCount != null && remainCount < 0) throw IllegalStateException("모든 횟수를 사용했습니다.")
+        editMember(member.copy(remainCount = remainCount))
     }
 
     suspend fun deleteMember(id: String) {

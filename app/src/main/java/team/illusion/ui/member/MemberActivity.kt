@@ -1,4 +1,4 @@
-package team.illusion.member
+package team.illusion.ui.member
 
 import android.content.Context
 import android.content.Intent

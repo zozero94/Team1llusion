@@ -1,4 +1,4 @@
-package team.illusion.admin.member.info
+package team.illusion.ui.member.info
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

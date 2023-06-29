@@ -1,6 +1,7 @@
 package team.illusion.data.model
 
 import android.os.Parcelable
+import team.illusion.data.DateManager
 
 @kotlinx.serialization.Serializable
 @kotlinx.parcelize.Parcelize
@@ -17,6 +18,9 @@ data class Member(
     val endDate: String = "",
     val comment: String = ""
 ) : Parcelable
+
+fun Member.displayRemainCount() = remainCount?.toString() ?: "INFINITE"
+fun Member.isExpireDate() = DateManager.isExpire(endDate)
 
 enum class Sex {
     Male, FeMale

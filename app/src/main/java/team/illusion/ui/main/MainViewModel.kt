@@ -1,4 +1,4 @@
-package team.illusion
+package team.illusion.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import team.illusion.data.model.Member
+import team.illusion.data.model.isExpireDate
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
 
@@ -31,14 +32,15 @@ class MainViewModel @Inject constructor(
     fun verify() {
         viewModelScope.launch {
             runCatching {
+                require(uiState.value.memberIdentifier.isNotEmpty()) { "입력값이 없습니다." }
                 val members = memberRepository.getMembers(uiState.value.memberIdentifier).first()
                 when (members.size) {
                     0 -> {
                         _verifyEvent.emit(VerifyEvent.Empty)
                     }
                     1 -> {
-                        _verifyEvent.emit(VerifyEvent.Confirm)
-                        _uiState.update { it.copy(members = emptyList(), memberIdentifier = "") }
+                        _verifyEvent.emit(VerifyEvent.Confirm(members.first()))
+                        _uiState.update { it.copy(members = emptyList()) }
                     }
                     else -> {
                         _verifyEvent.emit(VerifyEvent.Duplicate)
@@ -48,11 +50,25 @@ class MainViewModel @Inject constructor(
             }.onFailure {
                 _verifyEvent.emit(VerifyEvent.Error(it))
             }
+            updateId("")
 
         }
     }
 
-    fun checkIn(member: Member) {
-        memberRepository.checkIn(member)
+    suspend fun checkIn(member: Member) {
+        runCatching {
+            val remainCount = member.remainCount
+            if (remainCount != null) {
+                require(remainCount > 0) { "회원권이 모두 소진 되었습니다." }
+            }
+            require(!member.isExpireDate()) { "기간이 만료 되었습니다." }
+            memberRepository.checkIn(member)
+        }
+            .onSuccess {
+                _verifyEvent.emit(VerifyEvent.CheckIn(name = member.name, remainCount = member.remainCount))
+            }
+            .onFailure {
+                _verifyEvent.emit(VerifyEvent.Error(it))
+            }
     }
 }
