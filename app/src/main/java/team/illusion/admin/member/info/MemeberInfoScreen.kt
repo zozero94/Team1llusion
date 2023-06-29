@@ -1,4 +1,4 @@
-package team.illusion.admin.member.register
+package team.illusion.admin.member.info
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -8,8 +8,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,17 +25,17 @@ import team.illusion.data.model.Sex
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun MemberRegisterScreen(
+fun MemberInfoScreen(
     modifier: Modifier,
-    uiState: MemberRegisterUiState,
-    event: (MemberRegisterEvent) -> Unit
+    uiState: MemberInfoUiState,
+    event: (MemberInfoEvent) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
-    var selectedOption by rememberSaveable { mutableStateOf<Options?>(null) }
+    var selectedOption by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.option) }
 
     ModalBottomSheetLayout(
         modifier = modifier,
@@ -48,7 +50,7 @@ fun MemberRegisterScreen(
             )
         },
         content = {
-            MemberRegisterScreen(
+            MemberInfoScreen(
                 uiState = uiState,
                 selectedOption = selectedOption,
                 event = event,
@@ -60,20 +62,41 @@ fun MemberRegisterScreen(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-private fun MemberRegisterScreen(
-    uiState: MemberRegisterUiState,
+private fun MemberInfoScreen(
+    uiState: MemberInfoUiState,
     selectedOption: Options?,
-    event: (MemberRegisterEvent) -> Unit,
+    event: (MemberInfoEvent) -> Unit,
     sheetState: ModalBottomSheetState
 ) {
     val scope = rememberCoroutineScope()
     val keyboard = LocalSoftwareKeyboardController.current
-    var name by rememberSaveable { mutableStateOf("") }
-    var phone by rememberSaveable { mutableStateOf("") }
-    var address by rememberSaveable { mutableStateOf("") }
-    var comment by rememberSaveable { mutableStateOf("") }
-    var sex by rememberSaveable { mutableStateOf(Sex.Male) }
-    var enableExtraCount by rememberSaveable { mutableStateOf(false) }
+    var name by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.name.orEmpty()) }
+    var phone by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.phone.orEmpty()) }
+    var address by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.address.orEmpty()) }
+    var comment by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.comment.orEmpty()) }
+    var sex by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.sex ?: Sex.Male) }
+    var enableExtraCount by rememberSaveable(uiState.editMember) {
+        mutableStateOf(uiState.editMember?.enableExtraOption ?: false)
+    }
+    var openDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (openDialog) {
+        AlertDialog(
+            onDismissRequest = { openDialog = false },
+            backgroundColor = Color.White,
+            confirmButton = {
+                TextButton(onClick = { event(MemberInfoEvent.Delete) }) {
+                    Text(text = stringResource(id = android.R.string.ok), color = Color.Black)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { openDialog = false }) {
+                    Text(text = stringResource(id = android.R.string.cancel), color = Color.Black)
+                }
+            },
+            text = { Text(text = "삭제하시겠습니까?", color = Color.Black) },
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -120,21 +143,32 @@ private fun MemberRegisterScreen(
                 enableExtraCount = !enableExtraCount
             }
         }
-        ConfirmButton(
-            text = "확인",
-            isEnable = name.isNotEmpty() && phone.isNotEmpty() && selectedOption != null
-        ) {
-            event(
-                MemberRegisterEvent.Register(
-                    name = name,
-                    phone = phone,
-                    address = address,
-                    comment = comment,
-                    sex = sex,
-                    enableExtraOption = enableExtraCount,
-                    selectedOption = requireNotNull(selectedOption)
+        Column {
+            ConfirmButton(
+                text = "삭제",
+                buttonColors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.LightGray,
+                    contentColor = Color.Red
                 )
-            )
+            ) {
+                openDialog = true
+            }
+            ConfirmButton(
+                text = "확인",
+                isEnable = name.isNotEmpty() && phone.isNotEmpty() && selectedOption != null
+            ) {
+                event(
+                    MemberInfoEvent.Register(
+                        name = name,
+                        phone = phone,
+                        address = address,
+                        comment = comment,
+                        sex = sex,
+                        enableExtraOption = enableExtraCount,
+                        selectedOption = requireNotNull(selectedOption)
+                    )
+                )
+            }
         }
     }
 }
@@ -161,11 +195,12 @@ private fun OptionBottomSheet(onClickConfirm: (Options) -> Unit) {
 @Preview
 @Composable
 private fun Preview() {
-    MemberRegisterScreen(
+    MemberInfoScreen(
         modifier = Modifier,
-        uiState = MemberRegisterUiState(
+        uiState = MemberInfoUiState(
+            editMember = null,
             phoneVerify = false,
-            canRegister = false
+            canConfirm = false
         )
     ) {}
 }

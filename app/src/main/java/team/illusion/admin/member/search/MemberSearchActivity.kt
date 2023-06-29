@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import team.illusion.admin.member.info.MemberInfoActivity
 import team.illusion.data.model.Member
 import team.illusion.ui.theme.Team1llusionTheme
 
@@ -25,7 +26,9 @@ class MemberSearchActivity : ComponentActivity() {
                 MemberSearchScreen(
                     uiState = uiState,
                     query = query,
-                ) { viewModel.query(it) }
+                    queryChanged = { viewModel.query(it) },
+                    selectMember = { startActivity(MemberInfoActivity.getIntent(this, it.id)) }
+                )
             }
         }
     }

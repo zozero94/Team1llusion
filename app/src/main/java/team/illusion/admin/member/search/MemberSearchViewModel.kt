@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import team.illusion.data.model.Member
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
 
@@ -52,15 +51,6 @@ class MemberSearchViewModel @Inject constructor(
 
     fun query(query: String) {
         _query.update { query }
-    }
-
-    fun editMember(member: Member) {
-        viewModelScope.launch {
-            //todo remove 할때 prevMember를 넘겨줘야함, Screen Composable 재사용 구조에대해서 다시 고민해보기
-            memberRepository.removeMember(member)
-            memberRepository.registerMember(member)
-        }
-
     }
 
 }

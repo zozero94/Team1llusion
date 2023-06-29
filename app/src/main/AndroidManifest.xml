@@ -26,7 +26,7 @@
 
         <activity android:name=".admin.AdminActivity" />
         <activity android:name=".member.MemberActivity" />
-        <activity android:name=".admin.member.register.MemberRegisterActivity" />
+        <activity android:name=".admin.member.info.MemberInfoActivity" />
         <activity android:name=".admin.member.search.MemberSearchActivity" />
     </application>
 

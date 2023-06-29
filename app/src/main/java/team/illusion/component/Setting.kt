@@ -168,11 +168,16 @@ fun SearchTextField(query: String, onValueChange: (String) -> Unit) {
 }
 
 @Composable
-fun ConfirmButton(text: String, isEnable: Boolean = true, onClick: () -> Unit) {
+fun ConfirmButton(
+    text: String,
+    isEnable: Boolean = true,
+    buttonColors: ButtonColors = ButtonDefaults.textButtonColors(backgroundColor = Color.LightGray),
+    onClick: () -> Unit
+) {
     TextButton(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
-        colors = ButtonDefaults.textButtonColors(backgroundColor = Color.LightGray),
+        colors = buttonColors,
         shape = RoundedCornerShape(8.dp),
         enabled = isEnable
     ) {

@@ -4,10 +4,14 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.tasks.await
+import team.illusion.data.DateManager
+import team.illusion.data.awaitGet
 import team.illusion.data.awaitGetList
-import team.illusion.data.awaitSetValue
 import team.illusion.data.bindDataListChanged
 import team.illusion.data.model.Member
+import team.illusion.data.model.Options
+import team.illusion.data.model.Sex
 import javax.inject.Inject
 
 class MemberRepository @Inject constructor(
@@ -15,25 +19,52 @@ class MemberRepository @Inject constructor(
 ) {
     private val memberReference = firebase.getReference("member")
 
-    suspend fun registerMember(member: Member) {
+    suspend fun registerMember(
+        name: String,
+        phone: String,
+        sex: Sex,
+        option: Options,
+        enableExtraOption: Boolean,
+        address: String,
+        comment: String,
+        startDate: String,
+        remainCount: Int?,
+    ) {
         val newChild = memberReference.push()
-        newChild.awaitSetValue(member.copy(id = newChild.key.orEmpty()))
+        val member = Member(
+            id = newChild.key.orEmpty(),
+            name = name,
+            phone = phone,
+            sex = sex,
+            address = address,
+            option = option,
+            enableExtraOption = enableExtraOption,
+            remainCount = remainCount,
+            startDate = startDate,
+            endDate = DateManager.calculateDateAfterMonths(
+                target = startDate,
+                months = if (enableExtraOption) 3 else 1
+            ),
+            comment = comment,
+        )
+
+        newChild.setValue(member).await()
     }
 
     suspend fun getMembers(): List<Member> {
         return memberReference.awaitGetList()
     }
 
-    suspend fun findMember(member: Member): Member? {
-        return getMembers().find { it.phone == member.phone || it.id == member.id }
+    suspend fun getMember(id: String): Member? {
+        return memberReference.child(id).awaitGet()
+    }
+
+    suspend fun findMember(id: String?, phone: String): Member? {
+        return getMembers().find { it.phone == phone || it.id == id }
     }
 
     fun bindMembers(): Flow<List<Member>> {
         return memberReference.bindDataListChanged()
-    }
-
-    fun removeMember(member: Member) {
-        memberReference.child(member.id)
     }
 
     fun getMembers(phoneNumber: String): Flow<List<Member>> {
@@ -49,6 +80,25 @@ class MemberRepository @Inject constructor(
 
     fun checkIn(member: Member) {
 
+    }
+
+    suspend fun deleteMember(id: String) {
+        memberReference.child(id).removeValue().await()
+    }
+
+    suspend fun editMember(member: Member) {
+        deleteMember(member.id)
+        registerMember(
+            name = member.name,
+            phone = member.phone,
+            sex = member.sex,
+            option = member.option,
+            enableExtraOption = member.enableExtraOption,
+            address = member.address,
+            comment = member.comment,
+            startDate = member.startDate,
+            remainCount = member.remainCount
+        )
     }
 
 }

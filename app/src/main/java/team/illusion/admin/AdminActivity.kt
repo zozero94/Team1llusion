@@ -17,7 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import team.illusion.admin.member.register.MemberRegisterActivity
+import team.illusion.admin.member.info.MemberInfoActivity
 import team.illusion.admin.member.search.MemberSearchActivity
 import team.illusion.ui.theme.Team1llusionTheme
 
@@ -57,7 +57,7 @@ class AdminActivity : ComponentActivity() {
                                         }
                                     }
                                     AdminEvent.ClickMemberRegister -> {
-                                        startActivity(MemberRegisterActivity.getIntent(this))
+                                        startActivity(MemberInfoActivity.getIntent(this))
                                     }
                                     AdminEvent.ClickMemberSearch -> {
                                         startActivity(MemberSearchActivity.getIntent(this))

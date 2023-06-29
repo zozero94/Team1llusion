@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 inline fun <reified T> DatabaseReference.bindItem(): Flow<T> {
     return callbackFlow {
@@ -56,12 +55,6 @@ inline fun <reified T> DatabaseReference.bindDataListChanged(): Flow<List<T>> = 
     }
 }
 
-
-suspend inline fun <reified T> DatabaseReference.awaitSetValue(value: T) {
-    return suspendCoroutine { con ->
-        setValue(value).addOnCompleteListener { con.resume(Unit) }
-    }
-}
 
 suspend inline fun <reified T> DatabaseReference.awaitGet(): T? = suspendCancellableCoroutine { cont ->
     val listener = object : ValueEventListener {

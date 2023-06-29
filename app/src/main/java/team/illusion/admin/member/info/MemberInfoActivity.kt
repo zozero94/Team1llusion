@@ -1,4 +1,4 @@
-package team.illusion.admin.member.register
+package team.illusion.admin.member.info
 
 import android.content.Context
 import android.content.Intent
@@ -10,7 +10,9 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import team.illusion.data.model.Member
 import team.illusion.data.model.Options
 import team.illusion.data.model.Sex
@@ -18,41 +20,43 @@ import team.illusion.ui.theme.Team1llusionTheme
 
 
 @AndroidEntryPoint
-class MemberRegisterActivity : ComponentActivity() {
+class MemberInfoActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<MemberRegisterViewModel>()
+    private val viewModel by viewModels<MemberInfoViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Team1llusionTheme {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-                MemberRegisterScreen(
+                MemberInfoScreen(
                     modifier = Modifier,
                     uiState = uiState
                 ) { event ->
                     when (event) {
-                        is MemberRegisterEvent.Register -> {
+                        is MemberInfoEvent.Register -> {
                             viewModel.register(
-                                member = with(event) {
-                                    Member(
-                                        name = name,
-                                        phone = phone,
-                                        sex = sex,
-                                        address = address,
-                                        option = selectedOption,
-                                        enableExtraOption = enableExtraOption,
-                                        comment = comment
-                                    )
-                                },
+                                name = event.name,
+                                phone = event.phone,
+                                sex = event.sex,
+                                address = event.address,
+                                option = event.selectedOption,
+                                enableExtraOption = event.enableExtraOption,
+                                comment = event.comment,
                                 onCompletion = {
-                                    Toast.makeText(this@MemberRegisterActivity, "등록되었습니다.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this@MemberInfoActivity, "등록되었습니다.", Toast.LENGTH_SHORT).show()
                                     finish()
                                 },
                                 onError = { message ->
-                                    Toast.makeText(this@MemberRegisterActivity, message, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this@MemberInfoActivity, message, Toast.LENGTH_SHORT).show()
                                 }
                             )
+                        }
+                        MemberInfoEvent.Delete -> {
+                            lifecycleScope.launch {
+                                viewModel.delete()
+                                finish()
+                            }
                         }
                     }
                 }
@@ -61,18 +65,21 @@ class MemberRegisterActivity : ComponentActivity() {
     }
 
     companion object {
-        fun getIntent(context: Context) = Intent(context, MemberRegisterActivity::class.java)
+        const val ID = "id"
+        fun getIntent(context: Context, id: String? = null) = Intent(context, MemberInfoActivity::class.java)
+            .putExtra(ID, id)
     }
 
 }
 
 
-data class MemberRegisterUiState(
+data class MemberInfoUiState(
+    val editMember: Member?,
     val phoneVerify: Boolean,
-    val canRegister: Boolean
+    val canConfirm: Boolean
 )
 
-sealed interface MemberRegisterEvent {
+sealed interface MemberInfoEvent {
     data class Register(
         val name: String,
         val phone: String,
@@ -81,5 +88,7 @@ sealed interface MemberRegisterEvent {
         val sex: Sex,
         val enableExtraOption: Boolean,
         val selectedOption: Options
-    ) : MemberRegisterEvent
+    ) : MemberInfoEvent
+
+    object Delete : MemberInfoEvent
 }

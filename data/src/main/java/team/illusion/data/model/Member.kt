@@ -13,6 +13,7 @@ data class Member(
     val option: Options = Options.BASIC,
     val enableExtraOption: Boolean = false,
     val remainCount: Int? = null,
+    val startDate: String = "",
     val endDate: String = "",
     val comment: String = ""
 ) : Parcelable
