@@ -62,10 +62,16 @@ fun MemberColumn(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Image(imageVector = Icons.Default.Person, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Id : ${member.id}")
                     Text(text = "이름 : ${member.name}")
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "성별 : ${member.sex}")
                     Text(text = "휴대폰 : ${member.phone}")
+                    Text(text = "주소 : ${member.address}")
+                    Text(text = "옵션 : ${member.option}")
+                    Text(text = "남은 기간 : ${member.endDate}")
+                    Text(text = "남은 횟수 : ${member.remainCount}")
+                    Text(text = "기타 : ${member.comment}")
                 }
             }
         }

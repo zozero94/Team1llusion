@@ -43,8 +43,6 @@ class MainViewModel @Inject constructor(
                     else -> {
                         _verifyEvent.emit(VerifyEvent.Duplicate)
                         _uiState.update { it.copy(members = members) }
-                        //todo open bottomSheet
-
                     }
                 }
             }

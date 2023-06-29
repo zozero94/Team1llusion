@@ -54,9 +54,6 @@ class MainActivity : ComponentActivity() {
                             VerifyEvent.Error -> {
                                 Toast.makeText(this@MainActivity, "에러", Toast.LENGTH_SHORT).show()
                             }
-                            null -> {
-                                //do nothing
-                            }
                         }
                     }
                 }

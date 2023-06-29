@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import team.illusion.data.model.Sex
 
 @Composable
 fun SettingToggle(text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
@@ -47,6 +48,7 @@ fun SettingRadio(text: String, checked: Boolean, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .clickable(onClick = onClick)
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -56,6 +58,25 @@ fun SettingRadio(text: String, checked: Boolean, onClick: () -> Unit) {
     }
 }
 
+@Composable
+fun SexRadio(sex: Sex, onClick: (Sex) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = "성별", fontWeight = FontWeight.Bold)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Sex.values().forEach {
+                Text(text = it.name)
+                RadioButton(selected = it == sex, onClick = { onClick(it) })
+            }
+        }
+    }
+}
 
 @Composable
 fun PasswordTextField(
@@ -91,7 +112,7 @@ fun PasswordTextField(
 fun NormalTextField(
     text: String,
     label: String,
-    keyboardType: KeyboardType,
+    keyboardType: KeyboardType = KeyboardType.Text,
     isError: Boolean = false,
     onValueChange: (String) -> Unit
 ) {
@@ -173,7 +194,6 @@ fun SettingItem(text: String, click: () -> Unit) {
         Text(text = text, fontWeight = FontWeight.Bold)
         IconButton(onClick = click) {
             Image(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
-
         }
     }
 }

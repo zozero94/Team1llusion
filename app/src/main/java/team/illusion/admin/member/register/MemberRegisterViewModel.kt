@@ -3,7 +3,9 @@ package team.illusion.admin.member.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import team.illusion.data.DateManager
 import team.illusion.data.model.Member
@@ -16,46 +18,25 @@ class MemberRegisterViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         MemberRegisterUiState(
-            today = DateManager.today,
-            selectedOptions = null,
-            name = "",
-            phone = "",
             phoneVerify = true,
             canRegister = false
         )
     )
-
     val uiState = _uiState.asStateFlow()
 
-    init {
-        _uiState
-            .onEach {
-                _uiState.update {
-                    it.copy(
-                        canRegister = it.name.isNotEmpty() && it.phone.isNotEmpty() && it.selectedOptions != null
-                    )
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    fun changeName(name: String) {
-        _uiState.update { it.copy(name = name) }
-    }
-
-    fun changePhone(phone: String) {
-        _uiState.update { it.copy(phone = phone) }
-    }
-
-    fun changeOption(options: Options) {
-        _uiState.update { it.copy(selectedOptions = options) }
-    }
-
-    fun register(onCompletion: () -> Unit, onError: (errorMessage: String) -> Unit) {
+    fun register(
+        member: Member,
+        onCompletion: () -> Unit,
+        onError: (errorMessage: String) -> Unit
+    ) {
         viewModelScope.launch {
-            val member = with(uiState.value) {
-                Member(name = name, phone = phone, option = requireNotNull(selectedOptions?.text))
-            }
+            val member = member.copy(
+                endDate = DateManager.calculateDateAfterMonths(
+                    target = DateManager.today,
+                    months = if (member.enableExtraOption) 3 else 1
+                ),
+                remainCount = member.option.count + if (member.enableExtraOption) member.option.extraCount else 0,
+            )
             val verify = member.phone.matches(Regex("^010\\d{8}$"))
 
             val duplicateMember = memberRepository.findMember(member)

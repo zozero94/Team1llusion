@@ -11,17 +11,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import team.illusion.data.model.Member
+import team.illusion.data.model.Options
+import team.illusion.data.model.Sex
 import team.illusion.ui.theme.Team1llusionTheme
 
-enum class Options(
-    val text: String,
-    val description: String? = null,
-) {
-    Option1("1"),
-    Option2("2"),
-    Option3("3"),
-    Option4("4"),
-}
 
 @AndroidEntryPoint
 class MemberRegisterActivity : ComponentActivity() {
@@ -38,11 +32,19 @@ class MemberRegisterActivity : ComponentActivity() {
                     uiState = uiState
                 ) { event ->
                     when (event) {
-                        is MemberRegisterEvent.ChangeName -> viewModel.changeName(event.name)
-                        is MemberRegisterEvent.ChangePhone -> viewModel.changePhone(event.phone)
-                        is MemberRegisterEvent.ChangeOption -> viewModel.changeOption(event.options)
-                        MemberRegisterEvent.Register -> {
+                        is MemberRegisterEvent.Register -> {
                             viewModel.register(
+                                member = with(event) {
+                                    Member(
+                                        name = name,
+                                        phone = phone,
+                                        sex = sex,
+                                        address = address,
+                                        option = selectedOption,
+                                        enableExtraOption = enableExtraOption,
+                                        comment = comment
+                                    )
+                                },
                                 onCompletion = {
                                     Toast.makeText(this@MemberRegisterActivity, "등록되었습니다.", Toast.LENGTH_SHORT).show()
                                     finish()
@@ -66,17 +68,18 @@ class MemberRegisterActivity : ComponentActivity() {
 
 
 data class MemberRegisterUiState(
-    val today: String,
-    val selectedOptions: Options?,
-    val name: String,
-    val phone: String,
     val phoneVerify: Boolean,
     val canRegister: Boolean
 )
 
 sealed interface MemberRegisterEvent {
-    object Register : MemberRegisterEvent
-    data class ChangeName(val name: String) : MemberRegisterEvent
-    data class ChangePhone(val phone: String) : MemberRegisterEvent
-    data class ChangeOption(val options: Options): MemberRegisterEvent
+    data class Register(
+        val name: String,
+        val phone: String,
+        val address: String,
+        val comment: String,
+        val sex: Sex,
+        val enableExtraOption: Boolean,
+        val selectedOption: Options
+    ) : MemberRegisterEvent
 }
