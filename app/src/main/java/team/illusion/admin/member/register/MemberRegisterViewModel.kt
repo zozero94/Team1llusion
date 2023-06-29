@@ -35,8 +35,14 @@ class MemberRegisterViewModel @Inject constructor(
                     target = DateManager.today,
                     months = if (member.enableExtraOption) 3 else 1
                 ),
-                remainCount = member.option.count + if (member.enableExtraOption) member.option.extraCount else 0,
+                remainCount = if (member.enableExtraOption) {
+                    member.option.count?.times(3)?.plus(member.option.extraCount)
+                } else {
+                    member.option.count
+                },
             )
+
+
             val verify = member.phone.matches(Regex("^010\\d{8}$"))
 
             val duplicateMember = memberRepository.findMember(member)

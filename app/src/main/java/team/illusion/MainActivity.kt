@@ -7,12 +7,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,7 +66,8 @@ class MainActivity : ComponentActivity() {
                         MemberColumn(
                             modifier = Modifier.padding(16.dp),
                             members = uiState.members,
-                            clickMember = { viewModel.checkIn(it) })
+                            clickMember = { viewModel.checkIn(it) }
+                        )
                     }
                 ) {
                     MainScreen(uiState.memberIdentifier) { event ->
@@ -103,9 +106,15 @@ fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         IconButton(onClick = { event(MainEvent.ClickAdmin) }) {
-            Image(painter = painterResource(id = R.mipmap.profile), contentDescription = null)
+            Image(
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(20.dp)),
+                painter = painterResource(id = R.mipmap.profile),
+                contentDescription = null
+            )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(40.dp))
         NormalTextField(
             text = identifier,
             label = "회원번호",

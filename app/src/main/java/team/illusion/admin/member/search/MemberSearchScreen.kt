@@ -70,7 +70,7 @@ fun MemberColumn(
                     Text(text = "주소 : ${member.address}")
                     Text(text = "옵션 : ${member.option}")
                     Text(text = "남은 기간 : ${member.endDate}")
-                    Text(text = "남은 횟수 : ${member.remainCount}")
+                    Text(text = "남은 횟수 : ${if (member.remainCount == null) "INFINITE" else member.remainCount}")
                     Text(text = "기타 : ${member.comment}")
                 }
             }
