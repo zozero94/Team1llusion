@@ -1,10 +1,12 @@
 package team.illusion.data
 
 import com.google.firebase.database.*
+import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -48,23 +50,10 @@ inline fun <reified T> DatabaseReference.bindDataChanged(): Flow<T> {
 
 }
 
-inline fun <reified T> DatabaseReference.bindDataListChanged(): Flow<List<T>> {
-    return callbackFlow {
-        val eventListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val result = snapshot.children.mapNotNull { it.getValue(T::class.java) }
-                trySend(result)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                cancel(error.message, Exception(error.details))
-            }
-
-        }
-        addValueEventListener(eventListener)
-        awaitClose { removeEventListener(eventListener) }
+inline fun <reified T> DatabaseReference.bindDataListChanged(): Flow<List<T>> = snapshots.mapNotNull { snapshot ->
+    snapshot.children.mapNotNull { child ->
+        child.getValue(T::class.java)
     }
-
 }
 
 
