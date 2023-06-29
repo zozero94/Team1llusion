@@ -22,15 +22,16 @@ import team.illusion.data.model.Member
 @Composable
 fun MemberSearchScreen(
     uiState: MemberSearchUiState,
+    query: String,
     queryChanged: (String) -> Unit
 ) {
 
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        SearchTextField(query = uiState.query, onValueChange = queryChanged)
+        SearchTextField(query = query, onValueChange = queryChanged)
         Spacer(modifier = Modifier.height(16.dp))
-        MemberColumn(members = if (uiState.query.isEmpty()) uiState.members else uiState.searched) {
+        MemberColumn(members = if (query.isEmpty()) uiState.members else uiState.searched) {
 
         }
     }

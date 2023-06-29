@@ -15,13 +15,14 @@ class MemberSearchViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         MemberSearchUiState(
-            query = "",
             members = emptyList(),
             searched = emptyList()
         )
     )
-
     val uiState = _uiState.asStateFlow()
+
+    private val _query = MutableStateFlow("")
+    val query = _query.asStateFlow()
 
 
     init {
@@ -32,10 +33,7 @@ class MemberSearchViewModel @Inject constructor(
         }
         viewModelScope.launch {
 
-
-            _uiState
-                .map { it.query }
-                .debounce(300)
+            _query.debounce(300)
                 .collectLatest { query ->
                     _uiState.update {
                         if (query.isEmpty()) {
@@ -53,7 +51,7 @@ class MemberSearchViewModel @Inject constructor(
     }
 
     fun query(query: String) {
-        _uiState.update { it.copy(query = query) }
+        _query.update { query }
     }
 
     fun editMember(member: Member) {

@@ -21,8 +21,10 @@ class MemberSearchActivity : ComponentActivity() {
         setContent {
             Team1llusionTheme {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val query by viewModel.query.collectAsStateWithLifecycle()
                 MemberSearchScreen(
-                    uiState = uiState
+                    uiState = uiState,
+                    query = query,
                 ) { viewModel.query(it) }
             }
         }
@@ -36,7 +38,6 @@ class MemberSearchActivity : ComponentActivity() {
 
 
 data class MemberSearchUiState(
-    val query: String,
     val members: List<Member>,
     val searched: List<Member>
 )
