@@ -146,6 +146,9 @@ private fun MemberInfoScreen(
                 keyboard?.hide()
                 scope.launch { sheetState.show() }
             }
+            SettingItem(text = "시작날짜 선택\n${uiState.startDate}") {
+                event(MemberInfoEvent.OpenDatePicker)
+            }
         }
         Column {
             if (uiState.editMember != null) {
@@ -211,7 +214,8 @@ private fun Preview() {
         uiState = MemberInfoUiState(
             editMember = null,
             phoneVerify = false,
-            canConfirm = false
+            canConfirm = false,
+            startDate = ""
         )
     ) {}
 }

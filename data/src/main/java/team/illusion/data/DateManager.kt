@@ -1,5 +1,6 @@
 package team.illusion.data
 
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -28,9 +29,18 @@ object DateManager {
         return today.isAfter(targetDate)
     }
 
-    fun calculateDateAfterMonths(target:String,months: Long): String {
+    fun calculateDateAfterMonths(target: String, months: Long): String {
         val currentDate = LocalDate.parse(target, dateFormatter)
         val futureDate = currentDate.plusMonths(months)
         return futureDate.format(dateFormatter)
+    }
+
+    fun getFormattedDate(year: Int, month: Int, dayOfMonth: Int): String {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        }
+        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
     }
 }

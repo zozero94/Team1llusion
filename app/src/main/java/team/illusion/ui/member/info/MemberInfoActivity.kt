@@ -1,5 +1,6 @@
 package team.illusion.ui.member.info
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import team.illusion.data.DateManager
 import team.illusion.data.model.Member
 import team.illusion.data.model.Options
 import team.illusion.data.model.Sex
@@ -58,6 +60,14 @@ class MemberInfoActivity : ComponentActivity() {
                                 finish()
                             }
                         }
+                        MemberInfoEvent.OpenDatePicker -> {
+                            DatePickerDialog(this)
+                                .apply {
+                                    setOnDateSetListener { _, year, month, dayOfMonth ->
+                                        viewModel.setStartDate(DateManager.getFormattedDate(year, month, dayOfMonth))
+                                    }
+                                }.show()
+                        }
                     }
                 }
             }
@@ -76,7 +86,8 @@ class MemberInfoActivity : ComponentActivity() {
 data class MemberInfoUiState(
     val editMember: Member?,
     val phoneVerify: Boolean,
-    val canConfirm: Boolean
+    val canConfirm: Boolean,
+    val startDate: String
 )
 
 sealed interface MemberInfoEvent {
@@ -89,6 +100,8 @@ sealed interface MemberInfoEvent {
         val enableExtraOption: Boolean,
         val selectedOption: Options
     ) : MemberInfoEvent
+
+    object OpenDatePicker : MemberInfoEvent
 
     object Delete : MemberInfoEvent
 }

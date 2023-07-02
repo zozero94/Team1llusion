@@ -23,7 +23,8 @@ class MemberInfoViewModel @Inject constructor(
         MemberInfoUiState(
             editMember = null,
             phoneVerify = true,
-            canConfirm = false
+            canConfirm = false,
+            startDate = DateManager.today
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -33,7 +34,12 @@ class MemberInfoViewModel @Inject constructor(
             val id: String? = savedStateHandle[MemberInfoActivity.ID]
             if (id != null) {
                 val member = memberRepository.getMember(id)
-                _uiState.update { it.copy(editMember = member) }
+                _uiState.update {
+                    it.copy(
+                        editMember = member,
+                        startDate = member?.startDate ?: uiState.value.startDate
+                    )
+                }
             }
         }
     }
@@ -69,6 +75,7 @@ class MemberInfoViewModel @Inject constructor(
                                 enableExtraOption = enableExtraOption,
                                 address = address,
                                 comment = comment,
+                                startDate = uiState.value.startDate
                             )
                         )
                     } else {
@@ -80,7 +87,7 @@ class MemberInfoViewModel @Inject constructor(
                             enableExtraOption = enableExtraOption,
                             address = address,
                             comment = comment,
-                            startDate = DateManager.today,
+                            startDate = uiState.value.startDate,
                             remainCount = if (enableExtraOption) {
                                 option.count?.times(3)?.plus(option.extraCount)
                             } else {
@@ -101,5 +108,9 @@ class MemberInfoViewModel @Inject constructor(
     suspend fun delete() {
         val id = requireNotNull(uiState.value.editMember?.id)
         memberRepository.deleteMember(id)
+    }
+
+    fun setStartDate(date: String) {
+        _uiState.update { it.copy(startDate = date) }
     }
 }
