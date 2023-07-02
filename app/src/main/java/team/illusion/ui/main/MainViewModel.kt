@@ -7,11 +7,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import team.illusion.data.model.Member
 import team.illusion.data.model.isExpireDate
+import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    adminRepository: AdminRepository,
     private val memberRepository: MemberRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
@@ -24,6 +26,12 @@ class MainViewModel @Inject constructor(
 
     private val _verifyEvent = MutableSharedFlow<VerifyEvent>(extraBufferCapacity = 1)
     val verifyEvent = _verifyEvent.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            adminRepository.initialize()
+        }
+    }
 
     fun updateId(id: String) {
         _uiState.update { it.copy(memberIdentifier = id) }

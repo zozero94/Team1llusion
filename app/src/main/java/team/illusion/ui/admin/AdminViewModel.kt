@@ -6,11 +6,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import team.illusion.data.repository.AdminRepository
+import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class AdminViewModel @Inject constructor(
-    private val adminRepository: AdminRepository
+    private val adminRepository: AdminRepository,
+    private val memberRepository: MemberRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AdminUiState?>(null)
@@ -57,6 +59,11 @@ class AdminViewModel @Inject constructor(
             val isVerify = uiState.value?.password == password
             it?.copy(isLock = !isVerify, isFail = !isVerify)
         }
+    }
+
+    suspend fun deleteAll() {
+        adminRepository.deleteAll()
+        memberRepository.deleteAll()
     }
 }
 

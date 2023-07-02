@@ -103,4 +103,8 @@ class MemberRepository @Inject constructor(
         )
     }
 
+    suspend fun deleteAll() {
+        memberReference.removeValue().await()
+    }
+
 }

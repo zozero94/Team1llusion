@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import team.illusion.ui.member.info.MemberInfoActivity
 import team.illusion.ui.member.search.MemberSearchActivity
 import team.illusion.ui.theme.Team1llusionTheme
+import team.illusion.util.restartIntent
 
 @AndroidEntryPoint
 class AdminActivity : ComponentActivity() {
@@ -62,6 +63,12 @@ class AdminActivity : ComponentActivity() {
                                     AdminEvent.ClickMemberSearch -> {
                                         startActivity(MemberSearchActivity.getIntent(this))
                                     }
+                                    AdminEvent.DeleteAll -> {
+                                        lifecycleScope.launch {
+                                            adminViewModel.deleteAll()
+                                            startActivity(restartIntent(this@AdminActivity))
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -88,6 +95,8 @@ class AdminActivity : ComponentActivity() {
 sealed interface AdminEvent {
     object ClickMemberRegister : AdminEvent
     object ClickMemberSearch : AdminEvent
+    object DeleteAll : AdminEvent
+
     data class TogglePassword(val isEnable: Boolean) : AdminEvent
     data class OverPasswordLimit(val limit: Int) : AdminEvent
 
@@ -97,9 +106,7 @@ sealed interface AdminEvent {
 data class AdminUiState(
     val usePassword: Boolean,
     val password: String = "",
-
-
-    )
+)
 
 data class LockUiState(
     val isLock: Boolean,

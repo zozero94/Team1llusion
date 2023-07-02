@@ -142,7 +142,7 @@ private fun MemberInfoScreen(
             }
 
             SexRadio(sex = sex, onClick = { sex = it })
-            SettingItem(text = "기간 설정 ${selectedOption?.name.orEmpty()}") {
+            SettingItem(Modifier, text = "기간 설정 ${selectedOption?.name.orEmpty()}") {
                 keyboard?.hide()
                 scope.launch { sheetState.show() }
             }

@@ -214,9 +214,9 @@ fun ConfirmButton(
 }
 
 @Composable
-fun SettingItem(text: String, click: () -> Unit) {
+fun SettingItem(modifier: Modifier = Modifier, text: String, click: () -> Unit) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
             .clickable(onClick = click)
@@ -228,5 +228,23 @@ fun SettingItem(text: String, click: () -> Unit) {
         IconButton(onClick = click) {
             Image(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
         }
+    }
+}
+
+@Composable
+fun DeleteItem(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit
+) {
+    TextButton(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .padding(8.dp),
+        onClick = onClick,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Text(text = text, fontWeight = FontWeight.Bold, color = Color.Red)
     }
 }
