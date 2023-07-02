@@ -33,8 +33,8 @@ import team.illusion.data.model.displayRemainCount
 import team.illusion.data.model.isExpireDate
 import team.illusion.ui.admin.AdminActivity
 import team.illusion.ui.component.ConfirmButton
+import team.illusion.ui.component.MemberColumn
 import team.illusion.ui.component.NormalTextField
-import team.illusion.ui.member.search.MemberColumn
 import team.illusion.ui.theme.Team1llusionTheme
 
 @AndroidEntryPoint
