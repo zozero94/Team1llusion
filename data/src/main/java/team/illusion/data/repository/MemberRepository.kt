@@ -5,13 +5,8 @@ import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
-import team.illusion.data.DateManager
-import team.illusion.data.awaitGet
-import team.illusion.data.awaitGetList
-import team.illusion.data.bindDataListChanged
-import team.illusion.data.model.Member
-import team.illusion.data.model.Options
-import team.illusion.data.model.Sex
+import team.illusion.data.*
+import team.illusion.data.model.*
 import javax.inject.Inject
 
 class MemberRepository @Inject constructor(
@@ -29,6 +24,7 @@ class MemberRepository @Inject constructor(
         comment: String,
         startDate: String,
         remainCount: Int?,
+        checkInDate: List<String>
     ) {
         val newChild = memberReference.push()
         val member = Member(
@@ -46,6 +42,7 @@ class MemberRepository @Inject constructor(
                 months = if (enableExtraOption) 3 else 1
             ),
             comment = comment,
+            checkInDate = checkInDate
         )
 
         newChild.setValue(member).await()
@@ -57,6 +54,10 @@ class MemberRepository @Inject constructor(
 
     suspend fun getMember(id: String): Member? {
         return memberReference.child(id).awaitGet()
+    }
+
+    fun bindMember(id: String): Flow<Member> {
+        return memberReference.child(id).bindDataChanged()
     }
 
     suspend fun findMember(id: String?, phone: String): Member? {
@@ -80,8 +81,19 @@ class MemberRepository @Inject constructor(
 
     suspend fun checkIn(member: Member) {
         val remainCount = member.remainCount?.minus(1)
-        if (remainCount != null && remainCount < 0) throw IllegalStateException("모든 횟수를 사용했습니다.")
-        editMember(member.copy(remainCount = remainCount))
+        if (remainCount != null) {
+            require(remainCount > 0) { "회원권이 모두 소진 되었습니다." }
+        }
+        require(!member.isExpireDate()) { "기간이 만료 되었습니다." }
+        require(member.isBeforeDate()) { "시작일보다 더 빨리 방문해주셨습니다.." }
+        require(!member.checkInDate.contains(DateManager.today)) { "이미 체크인되어있습니다." }
+
+        editMember(
+            member.copy(
+                remainCount = remainCount,
+                checkInDate = member.checkInDate + listOf(DateManager.today)
+            )
+        )
     }
 
     suspend fun deleteMember(id: String) {
@@ -89,18 +101,20 @@ class MemberRepository @Inject constructor(
     }
 
     suspend fun editMember(member: Member) {
-        deleteMember(member.id)
-        registerMember(
-            name = member.name,
-            phone = member.phone,
-            sex = member.sex,
-            option = member.option,
-            enableExtraOption = member.enableExtraOption,
-            address = member.address,
-            comment = member.comment,
-            startDate = member.startDate,
-            remainCount = member.remainCount
-        )
+        memberReference.child(member.id).updateChildren(
+            mapOf(
+                "name" to member.name,
+                "phone" to member.phone,
+                "sex" to member.sex,
+                "option" to member.option,
+                "enableExtraOption" to member.enableExtraOption,
+                "address" to member.address,
+                "comment" to member.comment,
+                "startDate" to member.startDate,
+                "remainCount" to member.remainCount,
+                "checkInDate" to member.checkInDate
+            )
+        ).await()
     }
 
     suspend fun deleteAll() {

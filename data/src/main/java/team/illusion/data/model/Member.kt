@@ -16,11 +16,14 @@ data class Member(
     val remainCount: Int? = null,
     val startDate: String = "",
     val endDate: String = "",
-    val comment: String = ""
+    val comment: String = "",
+    val checkInDate: List<String> = emptyList()
 ) : Parcelable
 
 fun Member.displayRemainCount() = remainCount?.toString() ?: "INFINITE"
 fun Member.isExpireDate() = DateManager.isExpire(endDate)
+
+fun Member.isBeforeDate() = DateManager.isBefore(startDate)
 
 enum class Sex {
     Male, FeMale

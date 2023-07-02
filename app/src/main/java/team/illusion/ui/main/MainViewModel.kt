@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import team.illusion.data.model.Member
-import team.illusion.data.model.isExpireDate
 import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
@@ -64,14 +63,7 @@ class MainViewModel @Inject constructor(
     }
 
     suspend fun checkIn(member: Member) {
-        runCatching {
-            val remainCount = member.remainCount
-            if (remainCount != null) {
-                require(remainCount > 0) { "회원권이 모두 소진 되었습니다." }
-            }
-            require(!member.isExpireDate()) { "기간이 만료 되었습니다." }
-            memberRepository.checkIn(member)
-        }
+        runCatching { memberRepository.checkIn(member) }
             .onSuccess {
                 _verifyEvent.emit(VerifyEvent.CheckIn(name = member.name, remainCount = member.remainCount))
             }

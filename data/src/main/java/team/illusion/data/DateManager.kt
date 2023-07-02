@@ -29,6 +29,12 @@ object DateManager {
         return today.isAfter(targetDate)
     }
 
+    fun isBefore(target: String): Boolean {
+        val targetDate = LocalDate.parse(target, dateFormatter)
+        val today = LocalDate.parse(today)
+        return targetDate.isBefore(today) || targetDate.isEqual(today)
+    }
+
     fun calculateDateAfterMonths(target: String, months: Long): String {
         val currentDate = LocalDate.parse(target, dateFormatter)
         val futureDate = currentDate.plusMonths(months)

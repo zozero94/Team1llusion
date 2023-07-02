@@ -149,6 +149,11 @@ private fun MemberInfoScreen(
             SettingItem(text = "시작날짜 선택\n${uiState.startDate}") {
                 event(MemberInfoEvent.OpenDatePicker)
             }
+            if (uiState.editMember != null) {
+                SettingItem(text = "checkIn 확인하기") {
+                    event(MemberInfoEvent.OpenCheckInState(uiState.editMember.id))
+                }
+            }
         }
         Column {
             if (uiState.editMember != null) {

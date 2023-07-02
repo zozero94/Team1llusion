@@ -18,6 +18,7 @@ import team.illusion.data.DateManager
 import team.illusion.data.model.Member
 import team.illusion.data.model.Options
 import team.illusion.data.model.Sex
+import team.illusion.ui.member.checkin.CheckInActivity
 import team.illusion.ui.theme.Team1llusionTheme
 
 
@@ -68,6 +69,9 @@ class MemberInfoActivity : ComponentActivity() {
                                     }
                                 }.show()
                         }
+                        is MemberInfoEvent.OpenCheckInState -> {
+                            startActivity(CheckInActivity.getIntent(this,event.id))
+                        }
                     }
                 }
             }
@@ -100,6 +104,8 @@ sealed interface MemberInfoEvent {
         val enableExtraOption: Boolean,
         val selectedOption: Options
     ) : MemberInfoEvent
+
+    data class OpenCheckInState(val id: String) : MemberInfoEvent
 
     object OpenDatePicker : MemberInfoEvent
 

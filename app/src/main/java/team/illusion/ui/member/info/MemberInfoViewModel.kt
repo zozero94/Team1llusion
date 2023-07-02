@@ -92,7 +92,8 @@ class MemberInfoViewModel @Inject constructor(
                                 option.count?.times(3)?.plus(option.extraCount)
                             } else {
                                 option.count
-                            }
+                            },
+                            checkInDate = emptyList()
                         )
                     }
                     onCompletion()

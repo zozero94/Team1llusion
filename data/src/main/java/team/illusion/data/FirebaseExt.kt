@@ -10,22 +10,6 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-inline fun <reified T> DatabaseReference.bindItem(): Flow<T> {
-    return callbackFlow {
-        get().addOnSuccessListener { snapshot ->
-            val result = snapshot.getValue(T::class.java)
-            if (result == null) {
-                cancel()
-            } else {
-                trySend(result)
-            }
-        }.addOnCompleteListener {
-            cancel()
-        }
-        awaitClose { cancel() }
-    }
-}
-
 inline fun <reified T> DatabaseReference.bindDataChanged(): Flow<T> {
     return callbackFlow {
         val eventListener = object : ValueEventListener {

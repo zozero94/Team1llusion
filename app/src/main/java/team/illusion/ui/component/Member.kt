@@ -56,9 +56,10 @@ fun MemberColumn(
                         Text(text = "주소 : ${member.address}")
                     }
                     Text(text = "옵션 : ${member.option}")
+                    Text(text = "시작 날짜 : ${member.startDate}")
                     Text(
                         text = buildAnnotatedString {
-                            append("남은 기간 : ")
+                            append("남은 날짜 : ")
                             if (member.isExpireDate()) {
                                 withStyle(SpanStyle(Color.Red)) {
                                     append(member.endDate)
