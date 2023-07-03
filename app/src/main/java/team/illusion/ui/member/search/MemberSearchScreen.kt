@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import team.illusion.MembersPreviewProvider
 import team.illusion.data.model.Member
 import team.illusion.ui.component.MemberColumn
 import team.illusion.ui.component.SearchTextField
@@ -34,3 +37,16 @@ fun MemberSearchScreen(
     }
 }
 
+@Preview
+@Composable
+private fun Preview(@PreviewParameter(MembersPreviewProvider::class) members: List<Member>) {
+    MemberSearchScreen(
+        uiState = MemberSearchUiState(
+            members = members,
+            searched = emptyList()
+        ),
+        query = "",
+        queryChanged = {},
+        selectMember = {}
+    )
+}

@@ -14,10 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import team.illusion.MemberPreviewProvider
 import team.illusion.R
 import team.illusion.data.DateManager
+import team.illusion.data.model.Member
 import team.illusion.data.model.Options
 import team.illusion.data.model.Sex
 import team.illusion.ui.component.*
@@ -213,11 +216,13 @@ private fun OptionBottomSheet(
 
 @Preview
 @Composable
-private fun Preview() {
+private fun Preview(
+    @PreviewParameter(MemberPreviewProvider::class) member: Member
+) {
     MemberInfoScreen(
         modifier = Modifier,
         uiState = MemberInfoUiState(
-            editMember = null,
+            editMember = member,
             phoneVerify = false,
             canConfirm = false,
             startDate = ""

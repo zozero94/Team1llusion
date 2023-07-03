@@ -18,7 +18,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import team.illusion.MembersPreviewProvider
 import team.illusion.data.model.Member
 import team.illusion.data.model.displayRemainCount
 import team.illusion.data.model.isExpireDate
@@ -88,4 +91,12 @@ fun MemberColumn(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun Preview(
+    @PreviewParameter(MembersPreviewProvider::class) members: List<Member>
+) {
+    MemberColumn(members = members, clickMember = {})
 }

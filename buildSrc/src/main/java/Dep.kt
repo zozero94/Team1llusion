@@ -13,7 +13,8 @@ object Dep {
     const val startUp = "androidx.startup:startup-runtime:1.1.0"
 
     object Android {
-        const val androidxCore = "androidx.core:core-ktx:1.10.1"
+        const val androidxCore = "androidx.core:core-ktx:1.9.0"
+        //todo 최신은 1.10.1 preview 문제로 잠시 다운그레이드
         const val appCompat = "androidx.appcompat:appcompat:1.5.1"
         const val startUp = "androidx.startup:startup-runtime:1.1.1"
     }
