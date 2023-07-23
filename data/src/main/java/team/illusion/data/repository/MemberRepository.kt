@@ -5,8 +5,16 @@ import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
-import team.illusion.data.*
-import team.illusion.data.model.*
+import team.illusion.data.DateManager
+import team.illusion.data.awaitGet
+import team.illusion.data.awaitGetList
+import team.illusion.data.bindDataChanged
+import team.illusion.data.bindDataListChanged
+import team.illusion.data.model.Member
+import team.illusion.data.model.Options
+import team.illusion.data.model.Sex
+import team.illusion.data.model.isBeforeDate
+import team.illusion.data.model.isExpireDate
 import javax.inject.Inject
 
 class MemberRepository @Inject constructor(
@@ -19,10 +27,10 @@ class MemberRepository @Inject constructor(
         phone: String,
         sex: Sex,
         option: Options,
-        enableExtraOption: Boolean,
         address: String,
         comment: String,
         startDate: String,
+        endDate: String,
         remainCount: Int?,
         checkInDate: List<String>
     ) {
@@ -34,13 +42,9 @@ class MemberRepository @Inject constructor(
             sex = sex,
             address = address,
             option = option,
-            enableExtraOption = enableExtraOption,
             remainCount = remainCount,
             startDate = startDate,
-            endDate = DateManager.calculateDateAfterMonths(
-                target = startDate,
-                months = if (enableExtraOption) 3 else 1
-            ),
+            endDate = endDate,
             comment = comment,
             checkInDate = checkInDate
         )
@@ -107,7 +111,6 @@ class MemberRepository @Inject constructor(
                 "phone" to member.phone,
                 "sex" to member.sex,
                 "option" to member.option,
-                "enableExtraOption" to member.enableExtraOption,
                 "address" to member.address,
                 "comment" to member.comment,
                 "startDate" to member.startDate,

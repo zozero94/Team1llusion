@@ -1,6 +1,5 @@
 package team.illusion.ui.member.info
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -10,7 +9,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,7 +16,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import team.illusion.MemberPreviewProvider
-import team.illusion.R
 import team.illusion.data.DateManager
 import team.illusion.data.model.Member
 import team.illusion.data.model.Options
@@ -39,31 +36,21 @@ fun MemberInfoScreen(
         skipHalfExpanded = true
     )
     var selectedOption by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.option) }
-    var enableExtraOption by rememberSaveable(uiState.editMember) {
-        mutableStateOf(uiState.editMember?.enableExtraOption ?: false)
-    }
 
     ModalBottomSheetLayout(
         modifier = modifier,
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
         sheetContent = {
-            OptionBottomSheet(
-                enableExtraOption = enableExtraOption,
-                onClickConfirm = {
-                    selectedOption = it
-                    scope.launch { sheetState.hide() }
-                },
-                onClickExtraOption = {
-                    enableExtraOption = it
-                }
-            )
+            OptionBottomSheet {
+                selectedOption = it
+                scope.launch { sheetState.hide() }
+            }
         },
         content = {
             MemberInfoScreen(
                 uiState = uiState,
                 selectedOption = selectedOption,
-                enableExtraOption = enableExtraOption,
                 event = event,
                 sheetState = sheetState
             )
@@ -76,7 +63,6 @@ fun MemberInfoScreen(
 private fun MemberInfoScreen(
     uiState: MemberInfoUiState,
     selectedOption: Options?,
-    enableExtraOption: Boolean,
     event: (MemberInfoEvent) -> Unit,
     sheetState: ModalBottomSheetState
 ) {
@@ -152,6 +138,9 @@ private fun MemberInfoScreen(
             SettingItem(text = "시작날짜 선택\n${uiState.startDate}") {
                 event(MemberInfoEvent.OpenDatePicker)
             }
+            SettingItem(text = "종료날짜 선택\n${uiState.startDate}") {
+                event(MemberInfoEvent.OpenDatePicker)
+            }
             if (uiState.editMember != null) {
                 SettingItem(text = "checkIn 확인하기") {
                     event(MemberInfoEvent.OpenCheckInState(uiState.editMember.id))
@@ -181,7 +170,6 @@ private fun MemberInfoScreen(
                         address = address,
                         comment = comment,
                         sex = sex,
-                        enableExtraOption = enableExtraOption,
                         selectedOption = requireNotNull(selectedOption)
                     )
                 )
@@ -192,17 +180,13 @@ private fun MemberInfoScreen(
 
 @Composable
 private fun OptionBottomSheet(
-    enableExtraOption: Boolean,
-    onClickConfirm: (Options) -> Unit,
-    onClickExtraOption: (Boolean) -> Unit
+    onClickConfirm: (Options) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         var selected by rememberSaveable { mutableStateOf<Options?>(null) }
-        Image(painter = painterResource(id = R.mipmap.account), contentDescription = null)
-        ExtraOptionRadio(enableExtraOption,onClickExtraOption)
         Options.values().forEach {
             SettingRadio(text = it.name, checked = selected == it) {
                 selected = it
@@ -225,7 +209,8 @@ private fun Preview(
             editMember = member,
             phoneVerify = false,
             canConfirm = false,
-            startDate = ""
+            startDate = "",
+            endDate = ""
         )
     ) {}
 }

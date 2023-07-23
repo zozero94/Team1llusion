@@ -24,7 +24,8 @@ class MemberInfoViewModel @Inject constructor(
             editMember = null,
             phoneVerify = true,
             canConfirm = false,
-            startDate = DateManager.today
+            startDate = DateManager.today,
+            endDate = DateManager.today + 3
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -49,7 +50,6 @@ class MemberInfoViewModel @Inject constructor(
         phone: String,
         sex: Sex,
         option: Options,
-        enableExtraOption: Boolean,
         address: String,
         comment: String,
         onCompletion: () -> Unit,
@@ -72,7 +72,6 @@ class MemberInfoViewModel @Inject constructor(
                                 phone = phone,
                                 sex = sex,
                                 option = option,
-                                enableExtraOption = enableExtraOption,
                                 address = address,
                                 comment = comment,
                                 startDate = uiState.value.startDate
@@ -84,15 +83,14 @@ class MemberInfoViewModel @Inject constructor(
                             phone = phone,
                             sex = sex,
                             option = option,
-                            enableExtraOption = enableExtraOption,
                             address = address,
                             comment = comment,
                             startDate = uiState.value.startDate,
-                            remainCount = if (enableExtraOption) {
-                                option.count?.times(3)?.plus(option.extraCount)
-                            } else {
-                                option.count
-                            },
+                            endDate = DateManager.calculateDateAfterMonths(
+                                target = uiState.value.startDate,
+                                months = 1
+                            ),
+                            remainCount = option.count,
                             checkInDate = emptyList()
                         )
                     }

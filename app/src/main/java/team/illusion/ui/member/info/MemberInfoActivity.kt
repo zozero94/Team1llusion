@@ -44,16 +44,14 @@ class MemberInfoActivity : ComponentActivity() {
                                 sex = event.sex,
                                 address = event.address,
                                 option = event.selectedOption,
-                                enableExtraOption = event.enableExtraOption,
                                 comment = event.comment,
                                 onCompletion = {
                                     Toast.makeText(this@MemberInfoActivity, "등록되었습니다.", Toast.LENGTH_SHORT).show()
                                     finish()
-                                },
-                                onError = { message ->
-                                    Toast.makeText(this@MemberInfoActivity, message, Toast.LENGTH_SHORT).show()
                                 }
-                            )
+                            ) { message ->
+                                Toast.makeText(this@MemberInfoActivity, message, Toast.LENGTH_SHORT).show()
+                            }
                         }
                         MemberInfoEvent.Delete -> {
                             lifecycleScope.launch {
@@ -91,7 +89,8 @@ data class MemberInfoUiState(
     val editMember: Member?,
     val phoneVerify: Boolean,
     val canConfirm: Boolean,
-    val startDate: String
+    val startDate: String,
+    val endDate:String
 )
 
 sealed interface MemberInfoEvent {
@@ -101,7 +100,6 @@ sealed interface MemberInfoEvent {
         val address: String,
         val comment: String,
         val sex: Sex,
-        val enableExtraOption: Boolean,
         val selectedOption: Options
     ) : MemberInfoEvent
 

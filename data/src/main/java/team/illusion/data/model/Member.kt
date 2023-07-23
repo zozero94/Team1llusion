@@ -12,7 +12,6 @@ data class Member(
     val sex: Sex = Sex.Male,
     val address: String = "",
     val option: Options = Options.BASIC,
-    val enableExtraOption: Boolean = false,
     val remainCount: Int? = null,
     val startDate: String = "",
     val endDate: String = "",
