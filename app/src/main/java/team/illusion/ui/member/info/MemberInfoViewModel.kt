@@ -110,7 +110,7 @@ class MemberInfoViewModel @Inject constructor(
         memberRepository.deleteMember(id)
     }
 
-    fun settDate(isStart: Boolean, date: String) {
+    fun updateDate(isStart: Boolean, date: String) {
         _uiState.update {
             if (isStart)
                 it.copy(startDate = date, endDate = DateManager.calculateDateAfterMonths(date, 1))

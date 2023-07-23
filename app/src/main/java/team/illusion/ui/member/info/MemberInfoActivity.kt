@@ -66,7 +66,7 @@ class MemberInfoActivity : ComponentActivity() {
                             DatePickerDialog(
                                 /* context = */ this,
                                 /* listener = */ { _, year, month, dayOfMonth ->
-                                    viewModel.settDate(
+                                    viewModel.updateDate(
                                         isStart = event.isStart,
                                         date = DateManager.getFormattedDate(
                                             year = year,
