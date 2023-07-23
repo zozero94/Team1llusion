@@ -16,14 +16,18 @@ class CheckInViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val member = memberRepository.bindMember(requireNotNull(savedStateHandle[CheckInActivity.ID]))
-        .stateIn(viewModelScope, started = SharingStarted.Lazily, null)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
 
     fun deleteCheckIn(checkInDate: String) {
         viewModelScope.launch {
             val member = requireNotNull(member.value)
             memberRepository.editMember(
                 member.copy(
-                    checkInDate = member.checkInDate - setOf(checkInDate),
+                    checkInDate = member.checkInDate - checkInDate,
                     remainCount = member.remainCount + 1
                 )
             )
