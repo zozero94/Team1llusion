@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
                             TextButton(onClick = {
                                 scope.launch {
                                     viewModel.checkIn(checkInMember)
+                                    viewModel.updateId("")
                                 }
                             }) {
                                 Text(text = stringResource(id = android.R.string.ok), color = Color.Black)

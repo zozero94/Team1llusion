@@ -3,7 +3,12 @@ package team.illusion.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import team.illusion.data.model.Member
 import team.illusion.data.repository.AdminRepository
@@ -57,8 +62,6 @@ class MainViewModel @Inject constructor(
             }.onFailure {
                 _verifyEvent.emit(VerifyEvent.Error(it))
             }
-            updateId("")
-
         }
     }
 
