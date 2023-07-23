@@ -38,7 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import team.illusion.data.model.Member
 import team.illusion.data.model.Sex
+import team.illusion.data.model.isExpireDate
 
 @Composable
 fun SettingToggle(text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
@@ -186,14 +188,31 @@ fun NormalTextField(
 
 const val REMAIN_COUNT = 3
 
-enum class Filter(val desc: String) {
-    Normal("일반"),
-    RemainCount("${REMAIN_COUNT}회 미만"),
-    ExpireDate("기간만료");
+interface Filterable<T> {
+    fun filter(value: T): Boolean
+}
+
+enum class Filter(val desc: String) : Filterable<Member> {
+    Normal("일반") {
+        override fun filter(value: Member): Boolean {
+            return true
+        }
+    },
+    RemainCount("${REMAIN_COUNT}회 미만") {
+        override fun filter(value: Member): Boolean {
+            val count = value.remainCount.count ?: return false
+            return count < REMAIN_COUNT
+        }
+    },
+    ExpireDate("기간만료") {
+        override fun filter(value: Member): Boolean {
+            return value.isExpireDate()
+        }
+    };
 }
 
 @Composable
-fun SearchTextField(query: String,filter: Filter, onValueChange: (String, Filter) -> Unit) {
+fun SearchTextField(query: String, filter: Filter, onValueChange: (String, Filter) -> Unit) {
     var isOpen by rememberSaveable { mutableStateOf(false) }
     TextField(
         modifier = Modifier.fillMaxWidth(),

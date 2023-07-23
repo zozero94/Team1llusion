@@ -12,10 +12,8 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import team.illusion.data.model.Member
-import team.illusion.data.model.isExpireDate
 import team.illusion.data.repository.MemberRepository
 import team.illusion.ui.component.Filter
-import team.illusion.ui.component.REMAIN_COUNT
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,16 +46,7 @@ class MemberSearchViewModel @Inject constructor(
                     allMember.filter { member ->
                         val textFilter =
                             member.name.contains(query) || member.phone.contains(query)
-                        val optionFilter = when (filter) {
-                            Filter.Normal -> true
-                            Filter.RemainCount -> {
-                                val count = member.remainCount.count ?: return@filter false
-                                count < REMAIN_COUNT
-                            }
-
-                            Filter.ExpireDate -> member.isExpireDate()
-                        }
-
+                        val optionFilter = filter.filter(member)
                         if (query.isEmpty()) optionFilter else optionFilter && textFilter
                     }
                 }
