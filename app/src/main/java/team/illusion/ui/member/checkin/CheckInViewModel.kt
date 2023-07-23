@@ -24,7 +24,7 @@ class CheckInViewModel @Inject constructor(
             memberRepository.editMember(
                 member.copy(
                     checkInDate = member.checkInDate - setOf(checkInDate),
-                    remainCount = member.remainCount?.plus(1)
+                    remainCount = member.remainCount + 1
                 )
             )
         }

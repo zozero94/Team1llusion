@@ -58,7 +58,6 @@ fun MemberColumn(
                     if (member.address.isNotEmpty()) {
                         Text(text = "주소 : ${member.address}")
                     }
-                    Text(text = "옵션 : ${member.option}")
                     Text(text = "시작 날짜 : ${member.startDate}")
                     Text(
                         text = buildAnnotatedString {
@@ -75,7 +74,7 @@ fun MemberColumn(
                     Text(
                         text = buildAnnotatedString {
                             append("남은 횟수 : ")
-                            if (member.remainCount == 0) {
+                            if (member.remainCount.isExpire()) {
                                 withStyle(SpanStyle(Color.Red)) {
                                     append("${member.remainCount}")
                                 }

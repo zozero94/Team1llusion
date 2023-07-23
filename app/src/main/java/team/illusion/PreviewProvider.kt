@@ -1,8 +1,8 @@
 package team.illusion
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import team.illusion.data.model.Count
 import team.illusion.data.model.Member
-import team.illusion.data.model.Options
 import team.illusion.data.model.Sex
 
 class MembersPreviewProvider : PreviewParameterProvider<List<Member>> {
@@ -21,8 +21,7 @@ val ZERO = Member(
     phone = "010-3610-8845",
     sex = Sex.Male,
     address = "서울시 광진구",
-    option = Options.BASIC,
-    remainCount = 15,
+    remainCount = Count(15),
     startDate = "2023-07-03",
     endDate = "2023-08-03",
     comment = "nothing",
@@ -35,8 +34,7 @@ val TESTER1 = Member(
     phone = "010-1234-8845",
     sex = Sex.Male,
     address = "서울시 논현동",
-    option = Options.PREMIUM,
-    remainCount = null,
+    remainCount = Count(null),
     startDate = "2023-07-03",
     endDate = "2023-08-03",
     comment = "nothing",
@@ -49,8 +47,7 @@ val TESTER2 = Member(
     phone = "010-4321-8845",
     sex = Sex.Male,
     address = "서울시 노원구",
-    option = Options.STANDARD,
-    remainCount = 15,
+    remainCount = Count(0),
     startDate = "2023-07-03",
     endDate = "2023-08-03",
     comment = "nothing",

@@ -11,15 +11,17 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import team.illusion.MembersPreviewProvider
 import team.illusion.data.model.Member
+import team.illusion.ui.component.Filter
 import team.illusion.ui.component.MemberColumn
 import team.illusion.ui.component.SearchTextField
 
 @Composable
 fun MemberSearchScreen(
-    uiState: MemberSearchUiState,
+    members: List<Member>,
     query: String,
-    queryChanged: (String) -> Unit,
-    selectMember: (Member) -> Unit
+    filter: Filter,
+    queryChanged: (String, Filter) -> Unit,
+    selectMember: (Member) -> Unit,
 ) {
 
     Column(
@@ -27,11 +29,12 @@ fun MemberSearchScreen(
     ) {
         SearchTextField(
             query = query,
+            filter = filter,
             onValueChange = queryChanged
         )
         Spacer(modifier = Modifier.height(16.dp))
         MemberColumn(
-            members = if (query.isEmpty()) uiState.members else uiState.searched,
+            members = members,
             clickMember = selectMember
         )
     }
@@ -41,12 +44,9 @@ fun MemberSearchScreen(
 @Composable
 private fun Preview(@PreviewParameter(MembersPreviewProvider::class) members: List<Member>) {
     MemberSearchScreen(
-        uiState = MemberSearchUiState(
-            members = members,
-            searched = emptyList()
-        ),
+        members = members,
         query = "",
-        queryChanged = {},
-        selectMember = {}
-    )
+        filter = Filter.Normal,
+        queryChanged = { _, _ -> }
+    ) {}
 }

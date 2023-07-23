@@ -1,78 +1,37 @@
 package team.illusion.ui.member.info
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import team.illusion.MemberPreviewProvider
 import team.illusion.data.DateManager
+import team.illusion.data.model.Count
 import team.illusion.data.model.Member
-import team.illusion.data.model.Options
 import team.illusion.data.model.Sex
 import team.illusion.ui.component.*
 
 
 @Composable
-@OptIn(ExperimentalMaterialApi::class)
 fun MemberInfoScreen(
-    modifier: Modifier,
     uiState: MemberInfoUiState,
-    event: (MemberInfoEvent) -> Unit
-) {
-    val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true
-    )
-    var selectedOption by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.option) }
-
-    ModalBottomSheetLayout(
-        modifier = modifier,
-        sheetState = sheetState,
-        sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
-        sheetContent = {
-            OptionBottomSheet {
-                selectedOption = it
-                scope.launch { sheetState.hide() }
-            }
-        },
-        content = {
-            MemberInfoScreen(
-                uiState = uiState,
-                selectedOption = selectedOption,
-                event = event,
-                sheetState = sheetState
-            )
-        }
-    )
-}
-
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
-@Composable
-private fun MemberInfoScreen(
-    uiState: MemberInfoUiState,
-    selectedOption: Options?,
     event: (MemberInfoEvent) -> Unit,
-    sheetState: ModalBottomSheetState
 ) {
-    val scope = rememberCoroutineScope()
-    val keyboard = LocalSoftwareKeyboardController.current
     var name by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.name.orEmpty()) }
     var phone by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.phone.orEmpty()) }
     var address by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.address.orEmpty()) }
     var comment by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.comment.orEmpty()) }
     var sex by rememberSaveable(uiState.editMember) { mutableStateOf(uiState.editMember?.sex ?: Sex.Male) }
+    var count by rememberSaveable(uiState.editMember) {
+        mutableStateOf(uiState.editMember?.remainCount?.count?.toString().orEmpty())
+    }
 
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -131,15 +90,20 @@ private fun MemberInfoScreen(
             }
 
             SexRadio(sex = sex, onClick = { sex = it })
-            SettingItem(Modifier, text = "기간 설정 ${selectedOption?.name.orEmpty()}") {
-                keyboard?.hide()
-                scope.launch { sheetState.show() }
-            }
+
+            NormalTextField(
+                text = count,
+                label = "횟수 설정(공백시 무제한)",
+                onValueChange = { count = it },
+                keyboardType = KeyboardType.Number
+            )
             SettingItem(text = "시작날짜 선택\n${uiState.startDate}") {
-                event(MemberInfoEvent.OpenDatePicker)
+                val date = DateManager.parseLocalDate(uiState.startDate)
+                event(MemberInfoEvent.OpenDatePicker(date.year, date.monthValue, date.dayOfMonth))
             }
-            SettingItem(text = "종료날짜 선택\n${uiState.startDate}") {
-                event(MemberInfoEvent.OpenDatePicker)
+            SettingItem(text = "종료날짜 선택\n${uiState.endDate}") {
+                val date = DateManager.parseLocalDate(uiState.endDate)
+                event(MemberInfoEvent.OpenDatePicker(date.year, date.monthValue, date.dayOfMonth))
             }
             if (uiState.editMember != null) {
                 SettingItem(text = "checkIn 확인하기") {
@@ -161,7 +125,7 @@ private fun MemberInfoScreen(
             }
             ConfirmButton(
                 text = "확인",
-                isEnable = name.isNotEmpty() && phone.isNotEmpty() && selectedOption != null
+                isEnable = name.isNotEmpty() && phone.isNotEmpty()
             ) {
                 event(
                     MemberInfoEvent.Register(
@@ -170,30 +134,10 @@ private fun MemberInfoScreen(
                         address = address,
                         comment = comment,
                         sex = sex,
-                        selectedOption = requireNotNull(selectedOption)
+                        count = Count(count.toIntOrNull())
                     )
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun OptionBottomSheet(
-    onClickConfirm: (Options) -> Unit
-) {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        var selected by rememberSaveable { mutableStateOf<Options?>(null) }
-        Options.values().forEach {
-            SettingRadio(text = it.name, checked = selected == it) {
-                selected = it
-            }
-        }
-        ConfirmButton(text = "확인") {
-            selected?.let { onClickConfirm(it) }
         }
     }
 }
@@ -204,7 +148,6 @@ private fun Preview(
     @PreviewParameter(MemberPreviewProvider::class) member: Member
 ) {
     MemberInfoScreen(
-        modifier = Modifier,
         uiState = MemberInfoUiState(
             editMember = member,
             phoneVerify = false,

@@ -21,14 +21,15 @@ class MemberSearchActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Team1llusionTheme {
-                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val members by viewModel.members.collectAsStateWithLifecycle()
                 val query by viewModel.query.collectAsStateWithLifecycle()
+                val filter by viewModel.filter.collectAsStateWithLifecycle()
                 MemberSearchScreen(
-                    uiState = uiState,
+                    members = members,
                     query = query,
-                    queryChanged = { viewModel.query(it) },
-                    selectMember = { startActivity(MemberInfoActivity.getIntent(this, it.id)) }
-                )
+                    filter = filter,
+                    queryChanged = viewModel::query
+                ) { startActivity(MemberInfoActivity.getIntent(this, it.id)) }
             }
         }
     }

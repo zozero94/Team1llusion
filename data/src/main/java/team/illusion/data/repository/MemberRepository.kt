@@ -10,8 +10,8 @@ import team.illusion.data.awaitGet
 import team.illusion.data.awaitGetList
 import team.illusion.data.bindDataChanged
 import team.illusion.data.bindDataListChanged
+import team.illusion.data.model.Count
 import team.illusion.data.model.Member
-import team.illusion.data.model.Options
 import team.illusion.data.model.Sex
 import team.illusion.data.model.isBeforeDate
 import team.illusion.data.model.isExpireDate
@@ -26,13 +26,12 @@ class MemberRepository @Inject constructor(
         name: String,
         phone: String,
         sex: Sex,
-        option: Options,
         address: String,
         comment: String,
         startDate: String,
         endDate: String,
-        remainCount: Int?,
-        checkInDate: List<String>
+        remainCount: Count,
+        checkInDate: List<String>,
     ) {
         val newChild = memberReference.push()
         val member = Member(
@@ -41,7 +40,6 @@ class MemberRepository @Inject constructor(
             phone = phone,
             sex = sex,
             address = address,
-            option = option,
             remainCount = remainCount,
             startDate = startDate,
             endDate = endDate,
@@ -84,13 +82,14 @@ class MemberRepository @Inject constructor(
     }
 
     suspend fun checkIn(member: Member) {
-        val remainCount = member.remainCount?.minus(1)
-        if (remainCount != null) {
-            require(remainCount > 0) { "회원권이 모두 소진 되었습니다." }
+        val remainCount = if (member.remainCount.count != null) {
+            require(member.remainCount.count > 0) { "회원권이 모두 소진 되었습니다." }
+            Count(member.remainCount.count - 1)
+        } else {
+            Count(null)
         }
         require(!member.isExpireDate()) { "기간이 만료 되었습니다." }
         require(member.isBeforeDate()) { "시작일보다 더 빨리 방문해주셨습니다.." }
-        require(!member.checkInDate.contains(DateManager.today)) { "이미 체크인되어있습니다." }
 
         editMember(
             member.copy(
@@ -110,10 +109,10 @@ class MemberRepository @Inject constructor(
                 "name" to member.name,
                 "phone" to member.phone,
                 "sex" to member.sex,
-                "option" to member.option,
                 "address" to member.address,
                 "comment" to member.comment,
                 "startDate" to member.startDate,
+                "endDate" to member.endDate,
                 "remainCount" to member.remainCount,
                 "checkInDate" to member.checkInDate
             )

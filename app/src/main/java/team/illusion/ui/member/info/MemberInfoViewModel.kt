@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import team.illusion.data.DateManager
-import team.illusion.data.model.Options
+import team.illusion.data.model.Count
 import team.illusion.data.model.Sex
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class MemberInfoViewModel @Inject constructor(
             phoneVerify = true,
             canConfirm = false,
             startDate = DateManager.today,
-            endDate = DateManager.today + 3
+            endDate = DateManager.calculateDateAfterMonths(DateManager.today, 1)
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -38,7 +38,8 @@ class MemberInfoViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         editMember = member,
-                        startDate = member?.startDate ?: uiState.value.startDate
+                        startDate = member?.startDate ?: uiState.value.startDate,
+                        endDate = member?.endDate ?: uiState.value.endDate
                     )
                 }
             }
@@ -49,7 +50,7 @@ class MemberInfoViewModel @Inject constructor(
         name: String,
         phone: String,
         sex: Sex,
-        option: Options,
+        count: Count,
         address: String,
         comment: String,
         onCompletion: () -> Unit,
@@ -71,7 +72,7 @@ class MemberInfoViewModel @Inject constructor(
                                 name = name,
                                 phone = phone,
                                 sex = sex,
-                                option = option,
+                                remainCount = count,
                                 address = address,
                                 comment = comment,
                                 startDate = uiState.value.startDate
@@ -82,7 +83,6 @@ class MemberInfoViewModel @Inject constructor(
                             name = name,
                             phone = phone,
                             sex = sex,
-                            option = option,
                             address = address,
                             comment = comment,
                             startDate = uiState.value.startDate,
@@ -90,7 +90,7 @@ class MemberInfoViewModel @Inject constructor(
                                 target = uiState.value.startDate,
                                 months = 1
                             ),
-                            remainCount = option.count,
+                            remainCount = count,
                             checkInDate = emptyList()
                         )
                     }

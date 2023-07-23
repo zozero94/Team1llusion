@@ -9,12 +9,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.RadioButton
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -168,20 +184,50 @@ fun NormalTextField(
     )
 }
 
+const val REMAIN_COUNT = 3
+
+enum class Filter(val desc: String) {
+    Normal("일반"),
+    RemainCount("${REMAIN_COUNT}회 미만"),
+    ExpireDate("기간만료");
+}
+
 @Composable
-fun SearchTextField(query: String, onValueChange: (String) -> Unit) {
+fun SearchTextField(query: String,filter: Filter, onValueChange: (String, Filter) -> Unit) {
+    var isOpen by rememberSaveable { mutableStateOf(false) }
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = query,
-        onValueChange = onValueChange,
+        onValueChange = { onValueChange(it, filter) },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.LightGray,
             focusedIndicatorColor = Color.Transparent
         ),
+        leadingIcon = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { isOpen = !isOpen }) {
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+                }
+                Text(text = filter.desc)
+            }
+            DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }) {
+                Filter.values().forEach {
+                    DropdownMenuItem(
+                        onClick = {
+                            onValueChange(query, it)
+                            isOpen = false
+                        },
+                        content = {
+                            Text(text = it.desc)
+                        }
+                    )
+                }
+            }
+        },
         trailingIcon = {
             IconButton(
                 enabled = query.isNotEmpty(),
-                onClick = { onValueChange("") }
+                onClick = { onValueChange("", filter) }
             ) {
                 Icon(
                     imageVector = if (query.isEmpty()) Icons.Default.Search else Icons.Default.Close,

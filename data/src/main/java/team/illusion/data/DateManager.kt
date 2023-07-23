@@ -4,7 +4,8 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 object DateManager {
     private val calendar = Calendar.getInstance()
@@ -22,6 +23,10 @@ object DateManager {
             val day = calendar.get(Calendar.DAY_OF_MONTH)
             return LocalDate.of(year, month, day)
         }
+
+    fun parseLocalDate(date: String): LocalDate {
+        return LocalDate.parse(date, dateFormatter)
+    }
 
     fun isExpire(target: String): Boolean {
         val targetDate = LocalDate.parse(target, dateFormatter)

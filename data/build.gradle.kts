@@ -14,6 +14,7 @@ android {
 
     defaultConfig {
         minSdk = Versions.minSdk
+        compileSdk = Versions.compileSdk
         targetSdk = Versions.targetSdk
 
         consumerProguardFiles("consumer-rules.pro")

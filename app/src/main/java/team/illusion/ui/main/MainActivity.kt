@@ -28,8 +28,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import team.illusion.R
+import team.illusion.data.model.Count
 import team.illusion.data.model.Member
-import team.illusion.data.model.displayRemainCount
 import team.illusion.data.model.isExpireDate
 import team.illusion.ui.admin.AdminActivity
 import team.illusion.ui.component.ConfirmButton
@@ -83,8 +83,8 @@ class MainActivity : ComponentActivity() {
                                         appendLine(checkInMember.endDate)
                                     }
                                     append("남은 횟수 : ")
-                                    withStyle(SpanStyle(if (checkInMember.remainCount == 0) Color.Red else Color.Unspecified)) {
-                                        appendLine("${checkInMember.displayRemainCount()}")
+                                    withStyle(SpanStyle(if (checkInMember.remainCount.isExpire()) Color.Red else Color.Unspecified)) {
+                                        appendLine("${checkInMember.remainCount}")
                                     }
 
                                 },
@@ -112,11 +112,14 @@ class MainActivity : ComponentActivity() {
                                 Toast.makeText(this@MainActivity, "${verifyEvent.t.message}", Toast.LENGTH_SHORT).show()
                             }
                             is VerifyEvent.CheckIn -> {
-                                val message = if (verifyEvent.remainCount != null) {
-                                    "${verifyEvent.name} check in (${verifyEvent.remainCount}->${verifyEvent.remainCount - 1})"
-                                } else {
-                                    "${verifyEvent.name} check in (무제한 이용권)"
-                                }
+                                val count = verifyEvent.remainCount.count
+                                val message = "${verifyEvent.name} check in (" +
+                                        if (count == null) {
+                                            "무제한 이용권"
+                                        } else {
+                                            "$count->${count - 1}"
+                                        } + ")"
+
                                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
                                 openCheckInDialog.value = null
                                 sheetState.hide()
@@ -159,7 +162,7 @@ sealed interface VerifyEvent {
     data class Confirm(val member: Member) : VerifyEvent
     object Duplicate : VerifyEvent
     data class Error(val t: Throwable) : VerifyEvent
-    data class CheckIn(val name: String, val remainCount: Int?) : VerifyEvent
+    data class CheckIn(val name: String, val remainCount: Count) : VerifyEvent
     object Empty : VerifyEvent
 }
 

@@ -3,54 +3,71 @@ package team.illusion.ui.member.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import team.illusion.data.model.Member
+import team.illusion.data.model.isExpireDate
 import team.illusion.data.repository.MemberRepository
+import team.illusion.ui.component.Filter
+import team.illusion.ui.component.REMAIN_COUNT
 import javax.inject.Inject
 
 @HiltViewModel
 class MemberSearchViewModel @Inject constructor(
     private val memberRepository: MemberRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(
-        MemberSearchUiState(
-            members = emptyList(),
-            searched = emptyList()
-        )
-    )
-    val uiState = _uiState.asStateFlow()
+    private val _member = MutableStateFlow(emptyList<Member>())
+    val members = _member.asStateFlow()
+    private var _allMembers = MutableStateFlow(emptyList<Member>())
 
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
 
+    private val _filter = MutableStateFlow(Filter.Normal)
+    val filter = _filter.asStateFlow()
 
     init {
         viewModelScope.launch {
             memberRepository.bindMembers().collectLatest { members ->
-                _uiState.update { it.copy(members = members) }
+                _allMembers.update { members }
             }
         }
         viewModelScope.launch {
+            combine(
+                flow = _query.debounce(300),
+                flow2 = filter,
+                flow3 = _allMembers
+            ) { query, filter, allMember ->
+                _member.update {
+                    allMember.filter { member ->
+                        val textFilter =
+                            member.name.contains(query) || member.phone.contains(query)
+                        val optionFilter = when (filter) {
+                            Filter.Normal -> true
+                            Filter.RemainCount -> {
+                                val count = member.remainCount.count ?: return@filter false
+                                count < REMAIN_COUNT
+                            }
 
-            _query.debounce(300)
-                .collectLatest { query ->
-                    _uiState.update {
-                        if (query.isEmpty()) {
-                            it.copy(searched = emptyList())
-                        } else {
-                            it.copy(
-                                searched = it.members.filter { member ->
-                                    member.name.contains(query) || member.phone.contains(query)
-                                }
-                            )
+                            Filter.ExpireDate -> member.isExpireDate()
                         }
+
+                        if (query.isEmpty()) optionFilter else optionFilter && textFilter
                     }
                 }
+            }.collect()
         }
     }
 
-    fun query(query: String) {
+    fun query(query: String, filter: Filter) {
         _query.update { query }
+        _filter.update { filter }
     }
 
 }
