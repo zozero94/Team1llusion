@@ -75,7 +75,8 @@ class MemberInfoViewModel @Inject constructor(
                                 remainCount = count,
                                 address = address,
                                 comment = comment,
-                                startDate = uiState.value.startDate
+                                startDate = uiState.value.startDate,
+                                endDate = uiState.value.endDate
                             )
                         )
                     } else {
@@ -109,7 +110,12 @@ class MemberInfoViewModel @Inject constructor(
         memberRepository.deleteMember(id)
     }
 
-    fun setStartDate(date: String) {
-        _uiState.update { it.copy(startDate = date) }
+    fun settDate(isStart: Boolean, date: String) {
+        _uiState.update {
+            if (isStart)
+                it.copy(startDate = date, endDate = DateManager.calculateDateAfterMonths(date, 1))
+            else
+                it.copy(endDate = date)
+        }
     }
 }

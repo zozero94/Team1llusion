@@ -99,11 +99,11 @@ fun MemberInfoScreen(
             )
             SettingItem(text = "시작날짜 선택\n${uiState.startDate}") {
                 val date = DateManager.parseLocalDate(uiState.startDate)
-                event(MemberInfoEvent.OpenDatePicker(date.year, date.monthValue, date.dayOfMonth))
+                event(MemberInfoEvent.OpenDatePicker(true, date.year, date.monthValue, date.dayOfMonth))
             }
             SettingItem(text = "종료날짜 선택\n${uiState.endDate}") {
                 val date = DateManager.parseLocalDate(uiState.endDate)
-                event(MemberInfoEvent.OpenDatePicker(date.year, date.monthValue, date.dayOfMonth))
+                event(MemberInfoEvent.OpenDatePicker(false, date.year, date.monthValue, date.dayOfMonth))
             }
             if (uiState.editMember != null) {
                 SettingItem(text = "checkIn 확인하기") {

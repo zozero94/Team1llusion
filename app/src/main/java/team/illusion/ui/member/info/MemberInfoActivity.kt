@@ -66,7 +66,8 @@ class MemberInfoActivity : ComponentActivity() {
                             DatePickerDialog(
                                 /* context = */ this,
                                 /* listener = */ { _, year, month, dayOfMonth ->
-                                    viewModel.setStartDate(
+                                    viewModel.settDate(
+                                        isStart = event.isStart,
                                         date = DateManager.getFormattedDate(
                                             year = year,
                                             month = month,
@@ -119,7 +120,13 @@ sealed interface MemberInfoEvent {
 
     data class OpenCheckInState(val id: String) : MemberInfoEvent
 
-    data class OpenDatePicker(val year: Int, val month: Int, val day: Int) : MemberInfoEvent
+    data class OpenDatePicker(
+        val isStart: Boolean,
+        val year: Int,
+        val month: Int,
+        val day: Int,
+    ) :
+        MemberInfoEvent
 
     object Delete : MemberInfoEvent
 }
