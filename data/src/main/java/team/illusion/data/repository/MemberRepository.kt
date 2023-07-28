@@ -76,7 +76,7 @@ class MemberRepository @Inject constructor(
                 .mapNotNull {
                     it.getValue(Member::class.java)
                 }.filter {
-                    it.phone.contains(phoneNumber)
+                    it.phone.endsWith(phoneNumber)
                 }
         }
     }
