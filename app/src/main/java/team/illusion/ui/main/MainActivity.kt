@@ -181,7 +181,7 @@ fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
                 modifier = Modifier
                     .size(120.dp)
                     .clip(RoundedCornerShape(20.dp)),
-                painter = painterResource(id = R.mipmap.profile),
+                painter = painterResource(id = R.mipmap.logo),
                 contentDescription = null
             )
         }
