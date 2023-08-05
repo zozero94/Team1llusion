@@ -63,7 +63,11 @@ fun MemberInfoScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(text = "현재 날짜 : ${DateManager.today}")
-            NormalTextField(text = name, label = "이름", keyboardType = KeyboardType.Text) {
+            NormalTextField(
+                text = name,
+                label = "이름",
+                keyboardType = KeyboardType.Text
+            ) {
                 name = it
             }
             NormalTextField(
@@ -94,9 +98,8 @@ fun MemberInfoScreen(
             NormalTextField(
                 text = count,
                 label = "횟수 설정(공백시 무제한)",
-                onValueChange = { count = it },
                 keyboardType = KeyboardType.Number
-            )
+            ) { count = it }
             SettingItem(text = "시작날짜 선택\n${uiState.startDate}") {
                 val date = DateManager.parseLocalDate(uiState.startDate)
                 event(MemberInfoEvent.OpenDatePicker(true, date.year, date.monthValue, date.dayOfMonth))

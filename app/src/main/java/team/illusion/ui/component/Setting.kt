@@ -156,16 +156,16 @@ fun PasswordTextField(
 
 @Composable
 fun NormalTextField(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     text: String,
     label: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     isError: Boolean = false,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ) {
 
     TextField(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         value = text,
         onValueChange = onValueChange,
         label = { Text(text = label) },
@@ -262,13 +262,14 @@ fun SearchTextField(query: String, filter: Filter, onValueChange: (String, Filte
 
 @Composable
 fun ConfirmButton(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     text: String,
     isEnable: Boolean = true,
     buttonColors: ButtonColors = ButtonDefaults.textButtonColors(backgroundColor = Color.LightGray),
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     TextButton(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         onClick = onClick,
         colors = buttonColors,
         shape = RoundedCornerShape(8.dp),

@@ -7,14 +7,17 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -169,6 +172,12 @@ sealed interface VerifyEvent {
 
 @Composable
 fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
+    val configuration = LocalConfiguration.current
+    val modifier = when {
+        configuration.screenWidthDp > 600 -> Modifier.width(600.dp) // 패드 크기일 경우 600.dp로 제한
+        else -> Modifier.fillMaxWidth() // 휴대폰 크기일 경우 가로로 꽉 채움
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -180,19 +189,21 @@ fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
             Image(
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(RoundedCornerShape(20.dp)),
+                    .shadow(elevation = 2.dp, shape = CircleShape)
+                    .clip(CircleShape),
                 painter = painterResource(id = R.mipmap.logo),
-                contentDescription = null
+                contentDescription = null,
+                contentScale = ContentScale.Crop
             )
         }
         Spacer(modifier = Modifier.height(40.dp))
         NormalTextField(
+            modifier = modifier,
             text = identifier,
             label = "회원번호",
-            keyboardType = KeyboardType.Phone,
-            onValueChange = { event(MainEvent.ChangeMember(it)) }
-        )
-        ConfirmButton(text = "확인") {
+            keyboardType = KeyboardType.Phone
+        ) { event(MainEvent.ChangeMember(it)) }
+        ConfirmButton(modifier = modifier, text = "확인") {
             event(MainEvent.Confirm)
         }
     }
