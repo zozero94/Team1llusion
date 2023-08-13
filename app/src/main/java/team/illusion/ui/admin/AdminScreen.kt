@@ -19,8 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import team.illusion.BuildConfig
 import team.illusion.ui.component.ConfirmButton
 import team.illusion.ui.component.DeleteItem
 import team.illusion.ui.component.PasswordTextField
@@ -75,10 +77,13 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                modifier = Modifier
-                    .padding(16.dp),
-                text = "Admin : ${uiState.currentAdminEmail}"
+                text = buildAnnotatedString {
+                    appendLine("Admin : ${uiState.currentAdminEmail}")
+                    appendLine("hash : ${BuildConfig.GIT_COMMIT_HASH}")
+                    append("message : ${BuildConfig.GIT_COMMIT_MESSAGE}")
+                }
             )
+
             SettingItem(text = "회원 등록") { event(AdminEvent.ClickMemberRegister) }
             SettingItem(text = "회원 조회") { event(AdminEvent.ClickMemberSearch) }
             SettingToggle(

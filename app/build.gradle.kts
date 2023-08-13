@@ -7,6 +7,13 @@ plugins {
     id("kotlin-parcelize")
 
 }
+val gitCommitHash = "git rev-parse --short HEAD".execute().trim()
+val gitCommitMessage = "git log --format=%s -n 1".execute().trim()
+
+fun String.execute(): String {
+    val process = ProcessBuilder(split("\\s".toRegex())).redirectErrorStream(true).start()
+    return process.inputStream.bufferedReader().readText()
+}
 
 android {
     namespace = "team.illusion"
@@ -24,6 +31,8 @@ android {
             useSupportLibrary = true
         }
 
+        buildConfigField("String", "GIT_COMMIT_HASH", "\"$gitCommitHash\"")
+        buildConfigField("String", "GIT_COMMIT_MESSAGE", "\"$gitCommitMessage\"")
     }
 
     buildTypes {
