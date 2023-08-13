@@ -68,9 +68,12 @@ class AdminActivity : ComponentActivity() {
                                         startActivity(MemberSearchActivity.getIntent(this))
                                     }
 
-                                    AdminEvent.DeleteAll -> {
+                                    is AdminEvent.Delete -> {
                                         lifecycleScope.launch {
-                                            adminViewModel.deleteAll()
+                                            when(adminEvent.deleteOptions){
+                                                DeleteOptions.ALL -> adminViewModel.deleteAll()
+                                                DeleteOptions.EXPIRE -> adminViewModel.deleteExpire()
+                                            }
                                             startActivity(restartIntent(this@AdminActivity))
                                         }
                                     }
@@ -124,7 +127,7 @@ class AdminActivity : ComponentActivity() {
 sealed interface AdminEvent {
     object ClickMemberRegister : AdminEvent
     object ClickMemberSearch : AdminEvent
-    object DeleteAll : AdminEvent
+    data class Delete(val deleteOptions: DeleteOptions) : AdminEvent
     object DateAttendance : AdminEvent
 
     data class TogglePassword(val isEnable: Boolean) : AdminEvent

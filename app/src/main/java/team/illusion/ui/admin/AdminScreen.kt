@@ -29,26 +29,30 @@ import team.illusion.ui.component.SettingToggle
 
 val LocalMaxPasswordCount = compositionLocalOf { 10 }
 
+enum class DeleteOptions(val title: String) {
+    ALL("주의 : 전체 데이터가 삭제 됩니다."),
+    EXPIRE("기간, 횟수가 모두 소진된 회원을 삭제합니다.")
+}
 @Composable
 fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
     val maxPasswordCount = LocalMaxPasswordCount.current
     var password by rememberSaveable(uiState.password) { mutableStateOf(uiState.password) }
-    var openDeleteAlert by rememberSaveable { mutableStateOf(false) }
+    var deleteOptions by rememberSaveable { mutableStateOf<DeleteOptions?>(null) }
 
-    if (openDeleteAlert) {
+    deleteOptions?.let { option ->
         AlertDialog(
-            onDismissRequest = { openDeleteAlert = false },
-            title = { Text(text = "진짜 다 지움??") },
+            onDismissRequest = { deleteOptions = null },
+            title = { Text(text = option.title) },
             confirmButton = {
                 TextButton(onClick = {
-                    event(AdminEvent.DeleteAll)
-                    openDeleteAlert = false
+                    event(AdminEvent.Delete(option))
+                    deleteOptions = null
                 }) {
                     Text(text = stringResource(id = R.string.ok), color = Color.White)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { openDeleteAlert = false }) {
+                TextButton(onClick = { deleteOptions = null }) {
                     Text(text = stringResource(id = R.string.cancel), color = Color.White)
                 }
             },
@@ -91,7 +95,8 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
             }
 
             SettingItem(text = "날짜별 출석 조회") { event(AdminEvent.DateAttendance) }
-            DeleteItem(modifier = Modifier, text = "모든 데이터 삭제") { openDeleteAlert = true }
+            DeleteItem(text = "기간/횟수 종료된 회원 삭제") { deleteOptions = DeleteOptions.EXPIRE }
+            DeleteItem(text = "모든 데이터 삭제") { deleteOptions = DeleteOptions.ALL }
         }
         ConfirmButton(text = "변경") { event(AdminEvent.ChangePassword(password)) }
     }

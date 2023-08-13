@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import team.illusion.data.DateManager
 import team.illusion.data.GoogleManager
 import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository
@@ -90,6 +91,14 @@ class AdminViewModel @Inject constructor(
     suspend fun deleteAll() {
         adminRepository.deleteAll()
         memberRepository.deleteAll()
+    }
+
+    suspend fun deleteExpire() {
+        val members = memberRepository.getMembers()
+        val expireMembers = members.filter { DateManager.isExpire(it.endDate) || it.remainCount.isExpire() }
+        expireMembers.forEach {
+            memberRepository.deleteMember(it.id)
+        }
     }
 
 }
