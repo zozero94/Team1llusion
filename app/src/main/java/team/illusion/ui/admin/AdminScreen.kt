@@ -85,6 +85,7 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
                 ) { password = "" }
             }
 
+            SettingItem(text = "날짜별 출석 조회") { event(AdminEvent.DateAttendance) }
             DeleteItem(modifier = Modifier, text = "모든 데이터 삭제") { openDeleteAlert = true }
         }
         ConfirmButton(text = "변경") { event(AdminEvent.ChangePassword(password)) }

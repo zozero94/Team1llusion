@@ -29,6 +29,7 @@
         <activity android:name=".ui.member.info.MemberInfoActivity" />
         <activity android:name=".ui.member.search.MemberSearchActivity" />
         <activity android:name=".ui.member.checkin.CheckInActivity" />
+        <activity android:name=".ui.member.date.DateAttendanceActivity" />
     </application>
 
 </manifest>

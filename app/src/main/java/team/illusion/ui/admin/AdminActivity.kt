@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import team.illusion.ui.member.date.DateAttendanceActivity
 import team.illusion.ui.member.info.MemberInfoActivity
 import team.illusion.ui.member.search.MemberSearchActivity
 import team.illusion.ui.theme.Team1llusionTheme
@@ -73,6 +74,10 @@ class AdminActivity : ComponentActivity() {
                                             startActivity(restartIntent(this@AdminActivity))
                                         }
                                     }
+
+                                    AdminEvent.DateAttendance -> {
+                                        startActivity(DateAttendanceActivity.getIntent(this))
+                                    }
                                 }
                             }
                         }
@@ -115,6 +120,7 @@ sealed interface AdminEvent {
     object ClickMemberRegister : AdminEvent
     object ClickMemberSearch : AdminEvent
     object DeleteAll : AdminEvent
+    object DateAttendance : AdminEvent
 
     data class TogglePassword(val isEnable: Boolean) : AdminEvent
     data class OverPasswordLimit(val limit: Int) : AdminEvent

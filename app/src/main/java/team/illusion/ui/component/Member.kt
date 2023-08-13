@@ -51,7 +51,6 @@ fun MemberColumn(
                         .padding(8.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Id : ${member.id}")
                     Text(text = "이름 : ${member.name}")
                     Text(text = "성별 : ${member.sex}")
                     Text(text = "휴대폰 : ${member.phone}")
