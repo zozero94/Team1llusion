@@ -3,7 +3,13 @@ package team.illusion.ui.admin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository
@@ -21,9 +27,15 @@ class AdminViewModel @Inject constructor(
     private val _lockUiState = MutableStateFlow<LockUiState?>(null)
     val lockUiState = _lockUiState.asStateFlow()
 
+    private val _event = MutableSharedFlow<AuthorizeEvent>()
+    val event = _event.asSharedFlow()
+
     init {
         viewModelScope.launch {
-            combine(adminRepository.bindUsePassword(), adminRepository.bindPassword()) { usePassword, password ->
+            combine(
+                adminRepository.bindUsePassword(),
+                adminRepository.bindPassword()
+            ) { usePassword, password ->
                 _uiState.update {
                     AdminUiState(
                         usePassword = usePassword,
@@ -39,13 +51,18 @@ class AdminViewModel @Inject constructor(
     }
 
     suspend fun changePassword(password: String) {
-        val usePassword = uiState.value?.usePassword ?: false
-        adminRepository.updateUsePassword(usePassword)
-        if (!usePassword) {
-            adminRepository.changePassword("")
-        } else {
-            adminRepository.changePassword(password)
+        runCatching {
+            val usePassword = uiState.value?.usePassword ?: false
+            adminRepository.updateUsePassword(usePassword)
+            if (!usePassword) {
+                adminRepository.changePassword("")
+            } else {
+                adminRepository.changePassword(password)
+            }
         }
+            .onFailure {
+                _event.emit(AuthorizeEvent.AccessDenied(it))
+            }
     }
 
     fun changePasswordState(usePassword: Boolean) {

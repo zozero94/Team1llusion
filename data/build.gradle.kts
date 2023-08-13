@@ -44,6 +44,8 @@ dependencies {
     implementation(platform(Dep.Firebase.bom))
     implementation(Dep.Firebase.analytics)
     implementation(Dep.Firebase.database)
+    implementation(Dep.Firebase.auth)
+    implementation(Dep.Firebase.authKtx)
 
     implementation(Dep.Square.retrofit)
     implementation(Dep.Square.okhttp3Logging)

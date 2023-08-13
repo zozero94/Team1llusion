@@ -1,5 +1,6 @@
 package team.illusion.data.repository
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
@@ -9,7 +10,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class AdminRepository @Inject constructor(
-    firebase: FirebaseDatabase
+    firebase: FirebaseDatabase,
+    firebaseAuth: FirebaseAuth
 ) {
 
     private val adminReference = firebase.getReference("admin")
