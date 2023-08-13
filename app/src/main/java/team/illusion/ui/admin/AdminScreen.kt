@@ -2,6 +2,7 @@ package team.illusion.ui.admin
 
 import android.R
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +41,7 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
     val maxPasswordCount = LocalMaxPasswordCount.current
     var password by rememberSaveable(uiState.password) { mutableStateOf(uiState.password) }
     var deleteOptions by rememberSaveable { mutableStateOf<DeleteOptions?>(null) }
+    var debugVisibility by rememberSaveable { mutableStateOf(false) }
 
     deleteOptions?.let { option ->
         AlertDialog(
@@ -77,12 +79,18 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = buildAnnotatedString {
-                    appendLine("Admin : ${uiState.currentAdminEmail}")
-                    appendLine("hash : ${BuildConfig.GIT_COMMIT_HASH}")
-                    append("message : ${BuildConfig.GIT_COMMIT_MESSAGE}")
-                }
+                modifier = Modifier.clickable { debugVisibility = !debugVisibility },
+                text = "Admin : ${uiState.currentAdminEmail}"
             )
+            AnimatedVisibility(visible = debugVisibility) {
+                Text(
+                    text = buildAnnotatedString {
+                        appendLine()
+                        appendLine("hash : ${BuildConfig.GIT_COMMIT_HASH}")
+                        append("message : ${BuildConfig.GIT_COMMIT_MESSAGE}")
+                    }
+                )
+            }
 
             SettingItem(text = "회원 등록") { event(AdminEvent.ClickMemberRegister) }
             SettingItem(text = "회원 조회") { event(AdminEvent.ClickMemberSearch) }
