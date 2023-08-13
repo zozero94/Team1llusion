@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -19,6 +18,7 @@ import team.illusion.data.model.Member
 import team.illusion.data.model.Sex
 import team.illusion.ui.member.checkin.CheckInActivity
 import team.illusion.ui.theme.Team1llusionTheme
+import team.illusion.util.showToast
 
 
 @AndroidEntryPoint
@@ -44,13 +44,11 @@ class MemberInfoActivity : ComponentActivity() {
                                 comment = event.comment,
                                 count = event.count,
                                 onCompletion = {
-                                    Toast.makeText(this@MemberInfoActivity, "등록되었습니다.", Toast.LENGTH_SHORT)
-                                        .show()
+                                    showToast("등록되었습니다.")
                                     finish()
                                 },
                                 onError = { message ->
-                                    Toast.makeText(this@MemberInfoActivity, message, Toast.LENGTH_SHORT)
-                                        .show()
+                                    showToast(message)
                                 }
                             )
                         }

@@ -1,7 +1,6 @@
 package team.illusion.ui.main
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -34,11 +33,11 @@ import team.illusion.R
 import team.illusion.data.model.Count
 import team.illusion.data.model.Member
 import team.illusion.data.model.isExpireDate
-import team.illusion.ui.admin.AdminActivity
 import team.illusion.ui.component.ConfirmButton
 import team.illusion.ui.component.MemberColumn
 import team.illusion.ui.component.NormalTextField
 import team.illusion.ui.theme.Team1llusionTheme
+import team.illusion.util.showToast
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -110,10 +109,10 @@ class MainActivity : ComponentActivity() {
                                 sheetState.show()
                             }
                             VerifyEvent.Empty -> {
-                                Toast.makeText(this@MainActivity, "데이터 없음", Toast.LENGTH_SHORT).show()
+                                showToast("데이터 없음")
                             }
                             is VerifyEvent.Error -> {
-                                Toast.makeText(this@MainActivity, "${verifyEvent.t.message}", Toast.LENGTH_SHORT).show()
+                                showToast("${verifyEvent.t.message}")
                             }
                             is VerifyEvent.CheckIn -> {
                                 val count = verifyEvent.remainCount.count
@@ -124,7 +123,7 @@ class MainActivity : ComponentActivity() {
                                             "$count->${count - 1}"
                                         } + ")"
 
-                                Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+                                showToast(message)
                                 openCheckInDialog.value = null
                                 sheetState.hide()
                             }

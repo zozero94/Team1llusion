@@ -3,7 +3,6 @@ package team.illusion.ui.admin
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -26,10 +25,12 @@ import team.illusion.ui.theme.Team1llusionTheme
 import team.illusion.util.restartIntent
 import team.illusion.util.showToast
 
+
 @AndroidEntryPoint
 class AdminActivity : ComponentActivity() {
 
     private val adminViewModel by viewModels<AdminViewModel>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,12 +51,7 @@ class AdminActivity : ComponentActivity() {
                                         adminViewModel.changePasswordState(adminEvent.isEnable)
                                     }
                                     is AdminEvent.OverPasswordLimit -> {
-                                        Toast.makeText(
-                                            this,
-                                            String.format("%d자를 넘지마셈", adminEvent.limit),
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
+                                        showToast(String.format("%d자를 넘지마셈", adminEvent.limit))
                                     }
                                     is AdminEvent.ChangePassword -> {
                                         lifecycleScope.launch {
@@ -99,7 +95,7 @@ class AdminActivity : ComponentActivity() {
                 adminViewModel.event.collectLatest { event ->
                     when (event) {
                         is AuthorizeEvent.AccessDenied -> {
-                            showToast(this@AdminActivity,event.throwable.message)
+                            showToast(event.throwable.message)
                         }
                     }
 

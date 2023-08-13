@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AdminViewModel @Inject constructor(
     private val adminRepository: AdminRepository,
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AdminUiState?>(null)
@@ -82,5 +82,6 @@ class AdminViewModel @Inject constructor(
         adminRepository.deleteAll()
         memberRepository.deleteAll()
     }
+
 }
 
