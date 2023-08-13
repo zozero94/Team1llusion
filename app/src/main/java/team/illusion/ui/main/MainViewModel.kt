@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         MainUiState(
             memberIdentifier = "",
-            members = emptyList()
+            members = emptyList(),
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -75,7 +75,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun logout() {
-        viewModelScope.launch { googleManager.logout() }
+        viewModelScope.launch {
+            googleManager.logout()
+            _verifyEvent.emit(VerifyEvent.Logout)
+        }
     }
 
     suspend fun login(intent: Intent?): Boolean {

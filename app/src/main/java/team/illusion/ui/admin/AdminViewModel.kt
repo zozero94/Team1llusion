@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import team.illusion.data.GoogleManager
 import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class AdminViewModel @Inject constructor(
     private val adminRepository: AdminRepository,
     private val memberRepository: MemberRepository,
+    private val googleManager: GoogleManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AdminUiState?>(null)
@@ -40,6 +42,7 @@ class AdminViewModel @Inject constructor(
                     AdminUiState(
                         usePassword = usePassword,
                         password = password,
+                        currentAdminEmail = googleManager.getCurrentLoginUserEmail()
                     )
                 }
 
@@ -47,6 +50,12 @@ class AdminViewModel @Inject constructor(
                     LockUiState(isLock = usePassword && password.isNotEmpty(), isFail = false)
                 }
             }.collect()
+        }
+    }
+
+    fun refresh() {
+        _uiState.update {
+            it?.copy(currentAdminEmail = googleManager.getCurrentLoginUserEmail())
         }
     }
 

@@ -94,6 +94,11 @@ class AdminActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        adminViewModel.refresh()
+    }
+
     private fun bindAuthorizeEvents() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -136,6 +141,7 @@ sealed interface AuthorizeEvent {
 data class AdminUiState(
     val usePassword: Boolean,
     val password: String = "",
+    val currentAdminEmail: String,
 )
 
 data class LockUiState(

@@ -18,6 +18,7 @@ class GoogleManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseAuth: FirebaseAuth,
 ) {
+
     private val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestIdToken(context.getString(team.illusion.data.R.string.default_web_client_id))
         .requestEmail()
@@ -34,6 +35,10 @@ class GoogleManager @Inject constructor(
             .getResult(ApiException::class.java)
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         return firebaseAuth.signInWithCredential(credential).await().user
+    }
+
+    fun getCurrentLoginUserEmail(): String {
+        return GoogleSignIn.getLastSignedInAccount(context)?.email.orEmpty()
     }
 
 }

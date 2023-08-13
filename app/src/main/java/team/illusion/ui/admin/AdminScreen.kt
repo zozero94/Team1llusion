@@ -70,6 +70,11 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
             modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            Text(
+                modifier = Modifier
+                    .padding(16.dp),
+                text = "Admin : ${uiState.currentAdminEmail}"
+            )
             SettingItem(text = "회원 등록") { event(AdminEvent.ClickMemberRegister) }
             SettingItem(text = "회원 조회") { event(AdminEvent.ClickMemberSearch) }
             SettingToggle(
@@ -98,7 +103,8 @@ private fun Preview() {
     AdminScreen(
         uiState = AdminUiState(
             usePassword = true,
-            password = "1234"
+            password = "1234",
+            currentAdminEmail = "zozero94@gmail.com"
         ),
         event = {}
     )

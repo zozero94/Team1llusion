@@ -66,7 +66,6 @@ class MainActivity : ComponentActivity() {
                     runCatching {
                         val isLogin = viewModel.login(result.data)
                         if (isLogin) {
-                            showToast("로그인 되었습니다.")
                             startActivity(AdminActivity.getIntent(this@MainActivity))
                         } else {
                             showToast("인증 실패")
@@ -81,7 +80,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -167,6 +165,8 @@ class MainActivity : ComponentActivity() {
                                 openCheckInDialog.value = null
                                 sheetState.hide()
                             }
+
+                            VerifyEvent.Logout -> showToast("logout")
                         }
                     }
                 }
@@ -181,12 +181,11 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 ) {
-                    MainScreen(uiState.memberIdentifier) { event ->
+                    MainScreen(identifier = uiState.memberIdentifier) { event ->
                         when (event) {
                             MainEvent.ClickAdmin -> {
                                 val lastAccount = GoogleSignIn.getLastSignedInAccount(this)
                                 if (lastAccount != null) {
-                                    showToast(lastAccount.email)
                                     startActivity(AdminActivity.getIntent(this@MainActivity))
                                 } else {
                                     googleSignInLauncher.launch(viewModel.signInIntent)
@@ -217,6 +216,8 @@ sealed interface VerifyEvent {
     data class Error(val t: Throwable) : VerifyEvent
     data class CheckIn(val name: String, val remainCount: Count) : VerifyEvent
     object Empty : VerifyEvent
+
+    object Logout : VerifyEvent
 }
 
 @Composable
@@ -228,7 +229,8 @@ fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Text(
+
+    Text(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
