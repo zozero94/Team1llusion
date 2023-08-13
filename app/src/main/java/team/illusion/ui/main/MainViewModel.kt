@@ -1,5 +1,6 @@
 package team.illusion.ui.main
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import team.illusion.data.GoogleManager
 import team.illusion.data.model.Member
 import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository
@@ -17,8 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    adminRepository: AdminRepository,
-    private val memberRepository: MemberRepository
+    private val adminRepository: AdminRepository,
+    private val memberRepository: MemberRepository,
+    private val googleManager: GoogleManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         MainUiState(
@@ -31,11 +34,7 @@ class MainViewModel @Inject constructor(
     private val _verifyEvent = MutableSharedFlow<VerifyEvent>(extraBufferCapacity = 1)
     val verifyEvent = _verifyEvent.asSharedFlow()
 
-    init {
-        viewModelScope.launch {
-            adminRepository.initialize()
-        }
-    }
+    val signInIntent = googleManager.client.signInIntent
 
     fun updateId(id: String) {
         _uiState.update { it.copy(memberIdentifier = id) }
@@ -74,4 +73,17 @@ class MainViewModel @Inject constructor(
                 _verifyEvent.emit(VerifyEvent.Error(it))
             }
     }
+
+    fun logout() {
+        viewModelScope.launch { googleManager.logout() }
+    }
+
+    suspend fun login(intent: Intent?): Boolean {
+        val allows = adminRepository.getAllowAdmins().orEmpty()
+        val user = googleManager.signIn(intent)
+        val isVerify = allows.contains(user?.email.orEmpty())
+        if (!isVerify) logout()
+        return isVerify
+    }
+
 }

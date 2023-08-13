@@ -3,11 +3,17 @@ package team.illusion.ui.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -26,6 +32,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,15 +41,47 @@ import team.illusion.R
 import team.illusion.data.model.Count
 import team.illusion.data.model.Member
 import team.illusion.data.model.isExpireDate
+import team.illusion.ui.admin.AdminActivity
 import team.illusion.ui.component.ConfirmButton
 import team.illusion.ui.component.MemberColumn
 import team.illusion.ui.component.NormalTextField
 import team.illusion.ui.theme.Team1llusionTheme
 import team.illusion.util.showToast
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<MainViewModel>()
+
+    private val googleSignInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        when (result.resultCode) {
+            RESULT_CANCELED -> {
+                showToast("로그인 취소")
+            }
+
+            RESULT_OK -> {
+                lifecycleScope.launch {
+                    runCatching {
+                        val isLogin = viewModel.login(result.data)
+                        if (isLogin) {
+                            showToast("로그인 되었습니다.")
+                            startActivity(AdminActivity.getIntent(this@MainActivity))
+                        } else {
+                            showToast("인증 실패")
+                        }
+                    }.onFailure {
+                        Timber.e(it)
+                        showToast(it.message)
+                    }
+                }
+
+
+            }
+        }
+    }
+
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,9 +183,19 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainScreen(uiState.memberIdentifier) { event ->
                         when (event) {
-                            MainEvent.ClickAdmin -> startActivity(AdminActivity.getIntent(this@MainActivity))
+                            MainEvent.ClickAdmin -> {
+                                val lastAccount = GoogleSignIn.getLastSignedInAccount(this)
+                                if (lastAccount != null) {
+                                    showToast(lastAccount.email)
+                                    startActivity(AdminActivity.getIntent(this@MainActivity))
+                                } else {
+                                    googleSignInLauncher.launch(viewModel.signInIntent)
+                                }
+                            }
+
                             MainEvent.Confirm -> viewModel.verify()
                             is MainEvent.ChangeMember -> viewModel.updateId(event.id)
+                            MainEvent.Logout -> viewModel.logout()
                         }
 
                     }
@@ -177,33 +227,47 @@ fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
         else -> Modifier.fillMaxWidth() // 휴대폰 크기일 경우 가로로 꽉 채움
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        IconButton(onClick = { event(MainEvent.ClickAdmin) }) {
-            Image(
-                modifier = Modifier
-                    .size(120.dp)
-                    .shadow(elevation = 2.dp, shape = CircleShape)
-                    .clip(CircleShape),
-                painter = painterResource(id = R.mipmap.logo),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
-        }
-        Spacer(modifier = Modifier.height(40.dp))
-        NormalTextField(
-            modifier = modifier,
-            text = identifier,
-            label = "회원번호",
-            keyboardType = KeyboardType.Phone
-        ) { event(MainEvent.ChangeMember(it)) }
-        ConfirmButton(modifier = modifier, text = "확인") {
-            event(MainEvent.Confirm)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .clickable(
+                    indication = rememberRipple(color = Color.Gray),
+                    interactionSource = remember { MutableInteractionSource() },
+                ) { event(MainEvent.Logout) }
+                .padding(16.dp),
+            text = "logout"
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            IconButton(onClick = { event(MainEvent.ClickAdmin) }) {
+                Image(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .shadow(elevation = 2.dp, shape = CircleShape)
+                        .clip(CircleShape),
+                    painter = painterResource(id = R.mipmap.logo),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Spacer(modifier = Modifier.height(40.dp))
+            NormalTextField(
+                modifier = modifier,
+                text = identifier,
+                label = "회원번호",
+                keyboardType = KeyboardType.Phone
+            ) { event(MainEvent.ChangeMember(it)) }
+            ConfirmButton(modifier = modifier, text = "확인") {
+                event(MainEvent.Confirm)
+            }
         }
     }
 }
@@ -212,6 +276,8 @@ sealed interface MainEvent {
     object ClickAdmin : MainEvent
     object Confirm : MainEvent
     data class ChangeMember(val id: String) : MainEvent
+
+    object Logout : MainEvent
 }
 
 @Preview(showBackground = true)

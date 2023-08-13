@@ -54,6 +54,9 @@ dependencies {
     implementation(Dep.Android.startUp)
     implementation(Dep.Android.androidxCore)
 
+    implementation(Dep.Firebase.auth)
+    implementation(Dep.Firebase.authService)
+
     implementation(Dep.Lifecycle.viewModel)
     implementation(Dep.Lifecycle.composeViewModel)
 

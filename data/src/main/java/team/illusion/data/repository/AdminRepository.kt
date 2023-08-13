@@ -1,36 +1,19 @@
 package team.illusion.data.repository
 
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import team.illusion.data.awaitGet
 import team.illusion.data.bindDataChanged
-import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AdminRepository @Inject constructor(
     firebase: FirebaseDatabase,
-    firebaseAuth: FirebaseAuth
 ) {
 
     private val adminReference = firebase.getReference("admin")
-
-    suspend fun initialize() {
-        runCatching {
-            val usePasswordRef = adminReference.child("use_password")
-            val passwordRef = adminReference.child("password")
-
-            val usePassword = usePasswordRef.awaitGet<Boolean>()
-            val password = passwordRef.awaitGet<String>()
-            if (usePassword == null && password == null) {
-                usePasswordRef.setValue(false)
-                passwordRef.setValue("")
-            }
-        }.onFailure {
-            Timber.tag("zero:").e(it)
-        }
-    }
 
 
     fun bindUsePassword() = adminReference.child("use_password").bindDataChanged<Boolean>()
@@ -47,5 +30,9 @@ class AdminRepository @Inject constructor(
 
     suspend fun deleteAll() {
         adminReference.removeValue().await()
+    }
+
+    suspend fun getAllowAdmins(): String? {
+        return adminReference.child("allows").awaitGet<String>()
     }
 }

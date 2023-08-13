@@ -96,6 +96,7 @@ object Dep {
         const val database = "com.google.firebase:firebase-database-ktx"
         const val auth ="com.google.firebase:firebase-auth:22.1.0"
         const val authKtx ="com.google.firebase:firebase-auth-ktx:22.1.0"
+        const val authService = "com.google.android.gms:play-services-auth:20.6.0"
     }
 
     object Test {
