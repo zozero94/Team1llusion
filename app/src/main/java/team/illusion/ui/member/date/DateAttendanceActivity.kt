@@ -8,10 +8,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
@@ -57,9 +55,7 @@ class DateAttendanceActivity : ComponentActivity() {
                     Column {
                         Text(text = "오늘 : ${DateManager.today}")
                         Text(text = "선택 : $selectedDate")
-                        Text(text = "인원 : ${members.size}")
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
                     MemberColumn(
                         members = members,
                         clickMember = {

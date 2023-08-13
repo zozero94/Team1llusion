@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,58 +34,62 @@ fun MemberColumn(
     members: List<Member>,
     clickMember: (Member) -> Unit
 ) {
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (members.isEmpty()) {
-            item {
-                Text(modifier = Modifier.fillMaxWidth(), text = "데이터 없음", textAlign = TextAlign.Center)
-            }
-        } else {
-            items(members) { member ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
-                        .clickable { clickMember(member) }
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text = "이름 : ${member.name}")
-                    Text(text = "성별 : ${member.sex}")
-                    Text(text = "휴대폰 : ${member.phone}")
-                    if (member.address.isNotEmpty()) {
-                        Text(text = "주소 : ${member.address}")
-                    }
-                    Text(text = "시작 날짜 : ${member.startDate}")
-                    Text(
-                        text = buildAnnotatedString {
-                            append("남은 날짜 : ")
-                            if (member.isExpireDate()) {
-                                withStyle(SpanStyle(Color.Red)) {
+    Column {
+        Text(text = "인원 : ${members.size}")
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (members.isEmpty()) {
+                item {
+                    Text(modifier = Modifier.fillMaxWidth(), text = "데이터 없음", textAlign = TextAlign.Center)
+                }
+            } else {
+                items(members) { member ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+                            .clickable { clickMember(member) }
+                            .padding(8.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "이름 : ${member.name}")
+                        Text(text = "성별 : ${member.sex}")
+                        Text(text = "휴대폰 : ${member.phone}")
+                        if (member.address.isNotEmpty()) {
+                            Text(text = "주소 : ${member.address}")
+                        }
+                        Text(text = "시작 날짜 : ${member.startDate}")
+                        Text(
+                            text = buildAnnotatedString {
+                                append("남은 날짜 : ")
+                                if (member.isExpireDate()) {
+                                    withStyle(SpanStyle(Color.Red)) {
+                                        append(member.endDate)
+                                    }
+                                } else {
                                     append(member.endDate)
                                 }
-                            } else {
-                                append(member.endDate)
                             }
-                        }
-                    )
-                    Text(
-                        text = buildAnnotatedString {
-                            append("남은 횟수 : ")
-                            if (member.remainCount.isExpire()) {
-                                withStyle(SpanStyle(Color.Red)) {
-                                    append("${member.remainCount}")
+                        )
+                        Text(
+                            text = buildAnnotatedString {
+                                append("남은 횟수 : ")
+                                if (member.remainCount.isExpire()) {
+                                    withStyle(SpanStyle(Color.Red)) {
+                                        append("${member.remainCount}")
+                                    }
+                                } else {
+                                    append(member.displayRemainCount())
                                 }
-                            } else {
-                                append(member.displayRemainCount())
                             }
+                        )
+                        if (member.comment.isNotEmpty()) {
+                            Text(text = "기타 : ${member.comment}")
                         }
-                    )
-                    if (member.comment.isNotEmpty()) {
-                        Text(text = "기타 : ${member.comment}")
                     }
                 }
             }
