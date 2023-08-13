@@ -26,3 +26,9 @@ jobs:
       run : env
     - name: build APK
       run: ./gradlew assemble
+
+    - name : Upload APK
+      uses : actions/upload-artifact@v1
+      with :
+        name: app
+        path: app/build/outputs/apk/debug
