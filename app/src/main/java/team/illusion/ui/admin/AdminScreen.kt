@@ -5,7 +5,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
@@ -41,7 +43,6 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
     val maxPasswordCount = LocalMaxPasswordCount.current
     var password by rememberSaveable(uiState.password) { mutableStateOf(uiState.password) }
     var deleteOptions by rememberSaveable { mutableStateOf<DeleteOptions?>(null) }
-    var debugVisibility by rememberSaveable { mutableStateOf(false) }
 
     deleteOptions?.let { option ->
         AlertDialog(
@@ -75,23 +76,9 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
-            modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                modifier = Modifier.clickable { debugVisibility = !debugVisibility },
-                text = "Admin : ${uiState.currentAdminEmail}"
-            )
-            AnimatedVisibility(visible = debugVisibility) {
-                Text(
-                    text = buildAnnotatedString {
-                        appendLine()
-                        appendLine("hash : ${BuildConfig.GIT_COMMIT_HASH}")
-                        append("message : ${BuildConfig.GIT_COMMIT_MESSAGE}")
-                    }
-                )
-            }
-
+            DebugHeader(adminEmail = uiState.currentAdminEmail)
             SettingItem(text = "회원 등록") { event(AdminEvent.ClickMemberRegister) }
             SettingItem(text = "회원 조회") { event(AdminEvent.ClickMemberSearch) }
             SettingToggle(
@@ -108,10 +95,39 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
             }
 
             SettingItem(text = "날짜별 출석 조회") { event(AdminEvent.DateAttendance) }
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             DeleteItem(text = "기간/횟수 종료된 회원 삭제") { deleteOptions = DeleteOptions.EXPIRE }
             DeleteItem(text = "모든 데이터 삭제") { deleteOptions = DeleteOptions.ALL }
+            Spacer(modifier = Modifier.height(20.dp))
+            ConfirmButton(text = "변경") { event(AdminEvent.ChangePassword(password)) }
         }
-        ConfirmButton(text = "변경") { event(AdminEvent.ChangePassword(password)) }
+
+    }
+}
+
+@Composable
+private fun DebugHeader(
+    adminEmail: String,
+) {
+    var debugVisibility by rememberSaveable { mutableStateOf(false) }
+    Column {
+        Text(
+            modifier = Modifier.clickable { debugVisibility = !debugVisibility },
+            text = "Admin : $adminEmail"
+        )
+        AnimatedVisibility(visible = debugVisibility) {
+            Text(
+                text = buildAnnotatedString {
+                    appendLine()
+                    appendLine("hash : ${BuildConfig.GIT_COMMIT_HASH}")
+                    append("message : ${BuildConfig.GIT_COMMIT_MESSAGE}")
+                }
+            )
+        }
     }
 }
 
