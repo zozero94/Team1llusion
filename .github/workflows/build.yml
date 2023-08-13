@@ -15,15 +15,14 @@ jobs:
    steps:
     - name : checkout
       uses: actions/checkout@v2
-
+      
     - name : set up JDK
       uses: actions/setup-java@v2
       with:
         distribution : 'adopt'
         java-version: 11
-
+          
     - name : print env
       run : env
-
     - name: build APK
       run: ./gradlew assemble
