@@ -81,9 +81,9 @@ class MainViewModel @Inject constructor(
     suspend fun login(intent: Intent?): Boolean {
         val allows = adminRepository.getAllowAdmins().orEmpty()
         val user = googleManager.signIn(intent)
-        val isVerify = allows.contains(user?.email.orEmpty())
-        if (!isVerify) logout()
-        return isVerify
+        val isVerified = allows.contains(user?.email.orEmpty())
+        if (!isVerified) logout()
+        return isVerified
     }
 
 }
