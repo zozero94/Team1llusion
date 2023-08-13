@@ -1,6 +1,10 @@
 package team.illusion.data
 
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -8,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.suspendCancellableCoroutine
+import timber.log.Timber
 import kotlin.coroutines.resume
 
 inline fun <reified T> DatabaseReference.bindDataChanged(): Flow<T> {
@@ -48,6 +53,7 @@ suspend inline fun <reified T> DatabaseReference.awaitGet(): T? = suspendCancell
         }
 
         override fun onCancelled(error: DatabaseError) {
+            Timber.tag("awaitGet is Cancelled").e(error.message)
             cont.cancel()
         }
     }
