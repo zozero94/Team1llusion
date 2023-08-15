@@ -1,5 +1,5 @@
 object Versions {
-    const val compileSdk = 33
+    const val compileSdk = 34
     const val buildTools = "30.0.3"
 
     const val minSdk = 26
@@ -43,11 +43,11 @@ object Dep {
 
     object Compose {
 
-        const val ui = "androidx.compose.ui:ui:1.4.3"
-        const val material = "androidx.compose.material:material:1.4.3"
-        const val tooling = "androidx.compose.ui:ui-tooling:1.4.3"
+        const val ui = "androidx.compose.ui:ui:1.5.0"
+        const val material = "androidx.compose.material:material:1.5.0"
+        const val tooling = "androidx.compose.ui:ui-tooling:1.5.0"
         const val activity = "androidx.activity:activity-compose:1.7.2"
-        const val viewBinding = "androidx.compose.ui:ui-viewbinding:1.2.1"
+        const val viewBinding = "androidx.compose.ui:ui-viewbinding:1.5.0"
         const val lifecycle = "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
     }
 

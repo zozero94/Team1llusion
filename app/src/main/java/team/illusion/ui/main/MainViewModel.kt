@@ -37,7 +37,16 @@ class MainViewModel @Inject constructor(
     val signInIntent = googleManager.client.signInIntent
 
     fun updateId(id: String) {
-        _uiState.update { it.copy(memberIdentifier = id) }
+        _uiState.update {
+            val identifier = if (id.isEmpty()) "" else it.memberIdentifier + id
+            it.copy(memberIdentifier = identifier)
+        }
+    }
+
+    fun deleteId() {
+        _uiState.update {
+            it.copy(memberIdentifier = it.memberIdentifier.dropLast(1))
+        }
     }
 
     fun verify() {

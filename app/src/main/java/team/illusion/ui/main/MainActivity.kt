@@ -6,30 +6,17 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -37,14 +24,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import team.illusion.R
 import team.illusion.data.model.Count
 import team.illusion.data.model.Member
 import team.illusion.data.model.isExpireDate
 import team.illusion.ui.admin.AdminActivity
-import team.illusion.ui.component.ConfirmButton
 import team.illusion.ui.component.MemberColumn
-import team.illusion.ui.component.NormalTextField
 import team.illusion.ui.theme.Team1llusionTheme
 import team.illusion.util.showToast
 import timber.log.Timber
@@ -172,6 +156,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 ModalBottomSheetLayout(
+                    modifier = Modifier.background(color = Color.White),
                     sheetState = sheetState,
                     sheetContent = {
                         MemberColumn(
@@ -193,8 +178,9 @@ class MainActivity : ComponentActivity() {
                             }
 
                             MainEvent.Confirm -> viewModel.verify()
-                            is MainEvent.ChangeMember -> viewModel.updateId(event.id)
+                            is MainEvent.InputId -> viewModel.updateId(event.id)
                             MainEvent.Logout -> viewModel.logout()
+                            MainEvent.Delete -> viewModel.deleteId()
                         }
 
                     }
@@ -220,72 +206,12 @@ sealed interface VerifyEvent {
     object Logout : VerifyEvent
 }
 
-@Composable
-fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
-    val configuration = LocalConfiguration.current
-    val modifier = when {
-        configuration.screenWidthDp > 600 -> Modifier.width(600.dp) // 패드 크기일 경우 600.dp로 제한
-        else -> Modifier.fillMaxWidth() // 휴대폰 크기일 경우 가로로 꽉 채움
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-
-    Text(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .clickable(
-                    indication = rememberRipple(color = Color.Gray),
-                    interactionSource = remember { MutableInteractionSource() },
-                ) { event(MainEvent.Logout) }
-                .padding(16.dp),
-            text = "logout"
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            IconButton(onClick = { event(MainEvent.ClickAdmin) }) {
-                Image(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .shadow(elevation = 2.dp, shape = CircleShape)
-                        .clip(CircleShape),
-                    painter = painterResource(id = R.mipmap.logo),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-            }
-            Spacer(modifier = Modifier.height(40.dp))
-            NormalTextField(
-                modifier = modifier,
-                text = identifier,
-                label = "회원번호",
-                keyboardType = KeyboardType.Phone
-            ) { event(MainEvent.ChangeMember(it)) }
-            ConfirmButton(modifier = modifier, text = "확인") {
-                event(MainEvent.Confirm)
-            }
-        }
-    }
-}
-
 sealed interface MainEvent {
     object ClickAdmin : MainEvent
     object Confirm : MainEvent
-    data class ChangeMember(val id: String) : MainEvent
+    data class InputId(val id: String) : MainEvent
+    object Delete : MainEvent
 
     object Logout : MainEvent
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    Team1llusionTheme {
-        MainScreen("uiState.memberIdentifier") {}
-    }
-}
