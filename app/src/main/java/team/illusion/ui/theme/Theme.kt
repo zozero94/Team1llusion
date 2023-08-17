@@ -1,11 +1,16 @@
 package team.illusion.ui.theme
 
+import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 
 private val DarkColorPalette = darkColors(
     primary = Color.Black,
@@ -35,11 +40,24 @@ fun Team1llusionTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Comp
     } else {
         LightColorPalette
     }
+    val configuration = LocalConfiguration.current
+    val isTablet = remember(configuration) { configuration.screenWidthDp > 600 }
+    val isVertical = remember(configuration) {
+        configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+    }
 
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalUseTablet provides isTablet,
+        LocalUseVertical provides isVertical
+    ) {
+        MaterialTheme(
+            colors = colors,
+            typography = Typography,
+            shapes = Shapes,
+            content = content
+        )
+    }
 }
+
+val LocalUseTablet = compositionLocalOf { false }
+val LocalUseVertical = compositionLocalOf { true }
