@@ -13,15 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 
 private val DarkColorPalette = darkColors(
-    primary = Color.Black,
+    primary = IllusionColor.DefaultGray,
     primaryVariant = Color.White,
-    secondary = IllusionYellow
+    secondary = IllusionColor.IllusionYellow
 )
 
 private val LightColorPalette = lightColors(
-    primary = Color.Black,
+    primary = IllusionColor.DefaultGray,
     primaryVariant = Color.White,
-    secondary = IllusionYellow
+    secondary = IllusionColor.IllusionYellow
 
     /* Other default colors to override
     background = Color.White,

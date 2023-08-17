@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import team.illusion.R
+import team.illusion.ui.theme.IllusionColor
 import team.illusion.ui.theme.LocalUseTablet
 import team.illusion.ui.theme.LocalUseVertical
 import team.illusion.ui.theme.Team1llusionTheme
@@ -100,14 +101,14 @@ fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
                         .border(
                             width = 2.dp,
                             shape = RoundedCornerShape(12.dp),
-                            color = Color(0xffFBC02D)
+                            color = IllusionColor.IllusionYellow
                         )
                         .padding(vertical = if (isTablet) 20.dp else 10.dp, horizontal = 16.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = identifier,
-                        color = Color(0xffFBC02D),
+                        color = IllusionColor.IllusionYellow,
                         fontSize = if (isTablet) 40.sp else 20.sp,
                         maxLines = 1
                     )
@@ -152,7 +153,7 @@ fun Keypad(
         itemsIndexed(items = Inputs.values()) { index, item ->
             Number(
                 number = item,
-                color = Color(if (Inputs.values().lastIndex == index) 0xffFBC02D else 0xffeeeeee),
+                color = if (Inputs.values().lastIndex == index) IllusionColor.IllusionYellow else IllusionColor.DefaultGray,
                 onClick = { onClick(item) }
             )
         }

@@ -2,4 +2,8 @@ package team.illusion.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val IllusionYellow = Color(0xFFF1C334)
+object IllusionColor{
+
+    val IllusionYellow = Color(0xffFBC02D)
+    val DefaultGray = Color(0xffeeeeee)
+}
