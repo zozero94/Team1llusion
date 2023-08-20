@@ -2,8 +2,9 @@ package team.illusion.ui.member.date
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import team.illusion.data.DateManager
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
 
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class DateAttendanceViewModel @Inject constructor(
     memberRepository: MemberRepository,
 ) : ViewModel() {
-    private val dateChangeEvent = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    private val dateChangeEvent = MutableStateFlow(DateManager.today)
 
     val members = combine(dateChangeEvent, memberRepository.bindMembers()) { date, members ->
         members.filter { it.checkInDate.contains(date) }
