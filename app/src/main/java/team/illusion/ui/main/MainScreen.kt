@@ -40,13 +40,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import team.illusion.R
+import team.illusion.data.model.Center
 import team.illusion.ui.theme.IllusionColor
 import team.illusion.ui.theme.LocalUseTablet
 import team.illusion.ui.theme.LocalUseVertical
 import team.illusion.ui.theme.Team1llusionTheme
 
 @Composable
-fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
+fun MainScreen(identifier: String, center: Center = Center.None, event: (MainEvent) -> Unit) {
 
 
     val state = rememberLazyGridState()
@@ -54,6 +55,15 @@ fun MainScreen(identifier: String, event: (MainEvent) -> Unit) {
     val isVertical = LocalUseVertical.current
 
     Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(16.dp)
+                .background(color = IllusionColor.IllusionYellow, shape = RoundedCornerShape(size = 10.dp))
+                .padding(vertical = 8.dp, horizontal = 16.dp),
+            text = center.centerName,
+            fontWeight = FontWeight.Bold
+        )
         Text(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -211,7 +221,7 @@ fun KeypadTabletPreview() {
 @Composable
 fun DefaultTabletPreview() {
     Team1llusionTheme {
-        MainScreen("uiState.memberIdentifier") {}
+        MainScreen(identifier = "uiState.memberIdentifier") {}
     }
 }
 

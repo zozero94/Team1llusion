@@ -8,10 +8,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import team.illusion.data.datasource.CenterStore
 import team.illusion.data.datasource.GoogleManager
+import team.illusion.data.model.Center
 import team.illusion.data.model.Member
 import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository
@@ -22,9 +25,11 @@ class MainViewModel @Inject constructor(
     private val adminRepository: AdminRepository,
     private val memberRepository: MemberRepository,
     private val googleManager: GoogleManager,
+    centerStore: CenterStore,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         MainUiState(
+            center = Center.None,
             memberIdentifier = "",
             members = emptyList(),
         )
@@ -35,6 +40,14 @@ class MainViewModel @Inject constructor(
     val verifyEvent = _verifyEvent.asSharedFlow()
 
     val signInIntent = googleManager.client.signInIntent
+
+    init {
+        viewModelScope.launch {
+            centerStore.center.collectLatest { center ->
+                _uiState.update { it.copy(center = Center.findCenter(center)) }
+            }
+        }
+    }
 
     fun updateId(id: String) {
         _uiState.update {

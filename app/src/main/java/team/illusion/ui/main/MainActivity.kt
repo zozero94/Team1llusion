@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import team.illusion.AlertManager
 import team.illusion.Sound
+import team.illusion.data.model.Center
 import team.illusion.data.model.Count
 import team.illusion.data.model.Member
 import team.illusion.data.model.isExpireDate
@@ -185,7 +186,7 @@ class MainActivity : ComponentActivity() {
                     sheetShape = RoundedCornerShape(12.dp),
                     scrimColor = Color.Gray
                 ) {
-                    MainScreen(identifier = uiState.memberIdentifier) { event ->
+                    MainScreen(identifier = uiState.memberIdentifier, center = uiState.center) { event ->
                         when (event) {
                             MainEvent.ClickAdmin -> {
                                 val lastAccount = GoogleSignIn.getLastSignedInAccount(this)
@@ -211,6 +212,7 @@ class MainActivity : ComponentActivity() {
 }
 
 data class MainUiState(
+    val center: Center,
     val memberIdentifier: String,
     val members: List<Member>,
 )
