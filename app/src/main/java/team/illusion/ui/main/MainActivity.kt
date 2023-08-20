@@ -2,6 +2,7 @@ package team.illusion.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -85,6 +86,11 @@ class MainActivity : ComponentActivity() {
                 )
                 val openCheckInDialog = rememberSaveable { mutableStateOf<Member?>(null) }
                 val scope = rememberCoroutineScope()
+
+                BackHandler {
+                    if (sheetState.isVisible) scope.launch { sheetState.hide() }
+                    else onBackPressed()
+                }
 
                 openCheckInDialog.value?.let { checkInMember ->
                     AlertDialog(
