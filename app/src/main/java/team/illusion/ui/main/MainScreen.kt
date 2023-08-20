@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import team.illusion.R
@@ -160,10 +161,9 @@ fun Keypad(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        itemsIndexed(items = Inputs.values()) { index, item ->
+        items(items = Inputs.values()) { item ->
             Number(
                 number = item,
-                color = if (Inputs.values().lastIndex == index) IllusionColor.IllusionYellow else IllusionColor.DefaultGray,
                 onClick = { onClick(item) }
             )
         }
@@ -171,25 +171,29 @@ fun Keypad(
 }
 
 @Composable
-private fun Number(number: Inputs, color: Color, onClick: () -> Unit) {
+private fun Number(number: Inputs, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(90.dp)
             .clickable(onClick = onClick)
-            .background(color = color, shape = CircleShape)
+            .background(color = number.color, shape = CircleShape)
             .clip(CircleShape),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = number.number,
             fontWeight = FontWeight.Bold,
-            fontSize = 34.sp,
+            fontSize = number.fontSize,
             textAlign = TextAlign.Center
         )
     }
 }
 
-enum class Inputs(val number: String) {
+enum class Inputs(
+    val number: String,
+    val fontSize: TextUnit = 34.sp,
+    val color: Color = IllusionColor.DefaultGray,
+) {
     ONE("1"),
     TWO("2"),
     THREE("3"),
@@ -199,9 +203,9 @@ enum class Inputs(val number: String) {
     SEVEN("7"),
     EIGHT("8"),
     NINE("9"),
-    DELETE("<"),
+    DELETE("DEL", 20.sp),
     ZERO("0"),
-    CONFIRM("확인")
+    CONFIRM("OK", 20.sp, IllusionColor.IllusionYellow)
 }
 
 @Preview(showBackground = true)
