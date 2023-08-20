@@ -2,7 +2,8 @@ package team.illusion.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
+import androidx.activity.addCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -79,6 +80,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Team1llusionTheme {
+                val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+
                 // A surface container using the 'background' color from the theme
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val sheetState = rememberModalBottomSheetState(
@@ -87,11 +90,11 @@ class MainActivity : ComponentActivity() {
                 )
                 val openCheckInDialog = rememberSaveable { mutableStateOf<Member?>(null) }
                 val scope = rememberCoroutineScope()
-
-                BackHandler {
+                backPressedDispatcher?.addCallback(this@MainActivity) {
                     if (sheetState.isVisible) scope.launch { sheetState.hide() }
-                    else onBackPressed()
+                    else finish()
                 }
+
 
                 openCheckInDialog.value?.let { checkInMember ->
                     AlertDialog(
@@ -141,18 +144,22 @@ class MainActivity : ComponentActivity() {
                             is VerifyEvent.Confirm -> {
                                 openCheckInDialog.value = verifyEvent.member
                             }
+
                             VerifyEvent.Duplicate -> {
                                 sheetState.show()
                             }
+
                             VerifyEvent.Empty -> {
                                 showToast("데이터 없음")
                                 alertManager.play(Sound.Error)
                             }
+
                             is VerifyEvent.Error -> {
                                 showToast("${verifyEvent.t.message}")
                                 alertManager.play(Sound.Error)
 
                             }
+
                             is VerifyEvent.CheckIn -> {
                                 val count = verifyEvent.remainCount.count
                                 val message = "${verifyEvent.name} check in (" +
