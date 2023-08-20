@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import team.illusion.data.DateManager
+import team.illusion.data.datasource.DateManager
 import team.illusion.data.model.Count
 import team.illusion.data.model.Member
 import team.illusion.data.model.Sex
@@ -101,9 +101,8 @@ class MemberInfoActivity : ComponentActivity() {
 data class MemberInfoUiState(
     val editMember: Member?,
     val phoneVerify: Boolean,
-    val canConfirm: Boolean,
     val startDate: String,
-    val endDate:String
+    val endDate: String
 )
 
 sealed interface MemberInfoEvent {

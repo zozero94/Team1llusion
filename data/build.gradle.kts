@@ -41,6 +41,9 @@ dependencies {
     kapt(Dep.Dagger.compiler)
     implementation(Dep.inject)
 
+    implementation(Dep.Android.dataStore)
+    implementation(Dep.Android.dataStoreCore)
+
     implementation(platform(Dep.Firebase.bom))
     implementation(Dep.Firebase.analytics)
     implementation(Dep.Firebase.database)

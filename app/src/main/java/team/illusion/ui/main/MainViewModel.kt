@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import team.illusion.data.GoogleManager
+import team.illusion.data.datasource.GoogleManager
 import team.illusion.data.model.Member
 import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository

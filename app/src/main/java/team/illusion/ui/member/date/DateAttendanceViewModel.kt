@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import team.illusion.data.DateManager
+import team.illusion.data.datasource.DateManager
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
 

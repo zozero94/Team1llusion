@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import team.illusion.data.DateManager
+import team.illusion.data.datasource.DateManager
 import team.illusion.ui.component.MemberColumn
 import team.illusion.ui.member.info.MemberInfoActivity
 import team.illusion.ui.theme.Team1llusionTheme

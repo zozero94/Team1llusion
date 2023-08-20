@@ -3,24 +3,33 @@ package team.illusion.data.repository
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
-import team.illusion.data.DateManager
 import team.illusion.data.awaitGet
 import team.illusion.data.awaitGetList
 import team.illusion.data.bindDataChanged
 import team.illusion.data.bindDataListChanged
+import team.illusion.data.datasource.CenterStore
+import team.illusion.data.datasource.DateManager
 import team.illusion.data.model.Count
 import team.illusion.data.model.Member
 import team.illusion.data.model.Sex
 import team.illusion.data.model.isBeforeDate
 import team.illusion.data.model.isExpireDate
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class MemberRepository @Inject constructor(
-    firebase: FirebaseDatabase
+    firebase: FirebaseDatabase,
+    centerStore: CenterStore,
 ) {
-    private val memberReference = firebase.getReference("member")
+
+    private val memberReferenceFlow = centerStore.center.map {
+        firebase.getReference("member/$it")
+    }
 
     suspend fun registerMember(
         name: String,
@@ -33,7 +42,7 @@ class MemberRepository @Inject constructor(
         remainCount: Count,
         checkInDate: List<String>,
     ) {
-        val newChild = memberReference.push()
+        val newChild = memberReferenceFlow.first().push()
         val member = Member(
             id = newChild.key.orEmpty(),
             name = name,
@@ -51,15 +60,15 @@ class MemberRepository @Inject constructor(
     }
 
     suspend fun getMembers(): List<Member> {
-        return memberReference.awaitGetList()
+        return memberReferenceFlow.first().awaitGetList()
     }
 
     suspend fun getMember(id: String): Member? {
-        return memberReference.child(id).awaitGet()
+        return memberReferenceFlow.first().child(id).awaitGet()
     }
 
     fun bindMember(id: String): Flow<Member> {
-        return memberReference.child(id).bindDataChanged()
+        return memberReferenceFlow.flatMapLatest { it.child(id).bindDataChanged() }
     }
 
     suspend fun findMember(id: String?, phone: String): Member? {
@@ -67,11 +76,11 @@ class MemberRepository @Inject constructor(
     }
 
     fun bindMembers(): Flow<List<Member>> {
-        return memberReference.bindDataListChanged()
+        return memberReferenceFlow.flatMapLatest { it.bindDataListChanged() }
     }
 
     fun getMembers(phoneNumber: String): Flow<List<Member>> {
-        return memberReference.snapshots.map { snapshot ->
+        return memberReferenceFlow.flatMapLatest { it.snapshots }.map { snapshot ->
             snapshot.children
                 .mapNotNull {
                     it.getValue(Member::class.java)
@@ -100,11 +109,11 @@ class MemberRepository @Inject constructor(
     }
 
     suspend fun deleteMember(id: String) {
-        memberReference.child(id).removeValue().await()
+        memberReferenceFlow.first().child(id).removeValue().await()
     }
 
     suspend fun editMember(member: Member) {
-        memberReference.child(member.id).updateChildren(
+        memberReferenceFlow.first().child(member.id).updateChildren(
             mapOf(
                 "name" to member.name,
                 "phone" to member.phone,
@@ -120,7 +129,7 @@ class MemberRepository @Inject constructor(
     }
 
     suspend fun deleteAll() {
-        memberReference.removeValue().await()
+        memberReferenceFlow.first().removeValue().await()
     }
 
 }

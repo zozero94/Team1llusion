@@ -26,11 +26,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import team.illusion.BuildConfig
+import team.illusion.data.model.Center
 import team.illusion.ui.component.ConfirmButton
 import team.illusion.ui.component.DeleteItem
 import team.illusion.ui.component.PasswordTextField
 import team.illusion.ui.component.SettingItem
 import team.illusion.ui.component.SettingToggle
+import team.illusion.ui.theme.IllusionColor
 
 val LocalMaxPasswordCount = compositionLocalOf { 10 }
 
@@ -79,8 +81,13 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             DebugHeader(adminEmail = uiState.currentAdminEmail)
-            SettingItem(text = "회원 등록") { event(AdminEvent.ClickMemberRegister) }
-            SettingItem(text = "회원 조회") { event(AdminEvent.ClickMemberSearch) }
+            SettingItem(
+                text = "이용 지점 (${uiState.center.centerName})",
+                color = IllusionColor.IllusionYellow,
+                click = { event(AdminEvent.OpenCenterDialog) }
+            )
+            SettingItem(text = "회원 등록", click = { event(AdminEvent.ClickMemberRegister) })
+            SettingItem(text = "회원 조회", click = { event(AdminEvent.ClickMemberSearch) })
             SettingToggle(
                 text = "비밀번호 설정",
                 checked = uiState.usePassword,
@@ -94,7 +101,7 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
                 ) { password = "" }
             }
 
-            SettingItem(text = "날짜별 출석 조회") { event(AdminEvent.DateAttendance) }
+            SettingItem(text = "날짜별 출석 조회", click = { event(AdminEvent.DateAttendance) })
         }
 
         Column(
@@ -108,6 +115,7 @@ fun AdminScreen(uiState: AdminUiState, event: (AdminEvent) -> Unit) {
 
     }
 }
+
 
 @Composable
 private fun DebugHeader(
@@ -138,7 +146,8 @@ private fun Preview() {
         uiState = AdminUiState(
             usePassword = true,
             password = "1234",
-            currentAdminEmail = "zozero94@gmail.com"
+            currentAdminEmail = "zozero94@gmail.com",
+            center = Center.Gangnam
         ),
         event = {}
     )

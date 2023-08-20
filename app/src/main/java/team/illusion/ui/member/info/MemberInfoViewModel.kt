@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import team.illusion.data.DateManager
+import team.illusion.data.datasource.DateManager
 import team.illusion.data.model.Count
 import team.illusion.data.model.Sex
 import team.illusion.data.repository.MemberRepository
@@ -23,7 +23,6 @@ class MemberInfoViewModel @Inject constructor(
         MemberInfoUiState(
             editMember = null,
             phoneVerify = true,
-            canConfirm = false,
             startDate = DateManager.today,
             endDate = DateManager.calculateDateAfterMonths(DateManager.today, 1)
         )

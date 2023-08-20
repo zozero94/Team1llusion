@@ -280,11 +280,16 @@ fun ConfirmButton(
 }
 
 @Composable
-fun SettingItem(modifier: Modifier = Modifier, text: String, click: () -> Unit) {
+fun SettingItem(
+    modifier: Modifier = Modifier,
+    text: String,
+    color: Color = Color.LightGray,
+    click: () -> Unit
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .background(color = color, shape = RoundedCornerShape(8.dp))
             .clickable(onClick = click)
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,

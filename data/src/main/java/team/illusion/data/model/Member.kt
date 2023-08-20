@@ -3,7 +3,7 @@ package team.illusion.data.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import team.illusion.data.DateManager
+import team.illusion.data.datasource.DateManager
 
 @Serializable
 @Parcelize

@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import team.illusion.MemberPreviewProvider
-import team.illusion.data.DateManager
+import team.illusion.data.datasource.DateManager
 import team.illusion.data.model.Count
 import team.illusion.data.model.Member
 import team.illusion.data.model.Sex
@@ -100,18 +100,18 @@ fun MemberInfoScreen(
                 label = "횟수 설정(공백시 무제한)",
                 keyboardType = KeyboardType.Number
             ) { count = it }
-            SettingItem(text = "시작날짜 선택\n${uiState.startDate}") {
+            SettingItem(text = "시작날짜 선택\n${uiState.startDate}", click = {
                 val date = DateManager.parseLocalDate(uiState.startDate)
                 event(MemberInfoEvent.OpenDatePicker(true, date.year, date.monthValue, date.dayOfMonth))
-            }
-            SettingItem(text = "종료날짜 선택\n${uiState.endDate}") {
+            })
+            SettingItem(text = "종료날짜 선택\n${uiState.endDate}", click = {
                 val date = DateManager.parseLocalDate(uiState.endDate)
                 event(MemberInfoEvent.OpenDatePicker(false, date.year, date.monthValue, date.dayOfMonth))
-            }
+            })
             if (uiState.editMember != null) {
-                SettingItem(text = "checkIn 확인하기") {
+                SettingItem(text = "checkIn 확인하기", click = {
                     event(MemberInfoEvent.OpenCheckInState(uiState.editMember.id))
-                }
+                })
             }
         }
         Column {
@@ -154,7 +154,6 @@ private fun Preview(
         uiState = MemberInfoUiState(
             editMember = member,
             phoneVerify = false,
-            canConfirm = false,
             startDate = "",
             endDate = ""
         )

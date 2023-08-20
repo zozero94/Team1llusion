@@ -11,8 +11,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import team.illusion.data.DateManager
-import team.illusion.data.GoogleManager
+import team.illusion.data.datasource.CenterStore
+import team.illusion.data.datasource.DateManager
+import team.illusion.data.datasource.GoogleManager
+import team.illusion.data.model.Center
 import team.illusion.data.repository.AdminRepository
 import team.illusion.data.repository.MemberRepository
 import javax.inject.Inject
@@ -22,6 +24,7 @@ class AdminViewModel @Inject constructor(
     private val adminRepository: AdminRepository,
     private val memberRepository: MemberRepository,
     private val googleManager: GoogleManager,
+    private val centerStore: CenterStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AdminUiState?>(null)
@@ -37,10 +40,12 @@ class AdminViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 adminRepository.bindUsePassword(),
-                adminRepository.bindPassword()
-            ) { usePassword, password ->
+                adminRepository.bindPassword(),
+                centerStore.center
+            ) { usePassword, password, center ->
                 _uiState.update {
                     AdminUiState(
+                        center = Center.findCenter(center),
                         usePassword = usePassword,
                         password = password,
                         currentAdminEmail = googleManager.getCurrentLoginUserEmail()
@@ -98,6 +103,12 @@ class AdminViewModel @Inject constructor(
         val expireMembers = members.filter { DateManager.isExpire(it.endDate) || it.remainCount.isExpire() }
         expireMembers.forEach {
             memberRepository.deleteMember(it.id)
+        }
+    }
+
+    fun updateCenter(selectedCenter: Center) {
+        viewModelScope.launch {
+            centerStore.updateCenter(selectedCenter)
         }
     }
 

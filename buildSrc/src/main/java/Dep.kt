@@ -17,6 +17,9 @@ object Dep {
         //todo 최신은 1.10.1 preview 문제로 잠시 다운그레이드
         const val appCompat = "androidx.appcompat:appcompat:1.5.1"
         const val startUp = "androidx.startup:startup-runtime:1.1.1"
+        const val dataStore = "androidx.datastore:datastore-preferences:1.0.0"
+        const val dataStoreCore = "androidx.datastore:datastore-preferences-core:1.0.0"
+
     }
 
     object Lifecycle {

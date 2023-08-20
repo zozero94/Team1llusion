@@ -1,4 +1,4 @@
-package team.illusion.data
+package team.illusion.data.datasource
 
 import java.text.SimpleDateFormat
 import java.time.LocalDate

@@ -1,5 +1,6 @@
 package team.illusion.ui.admin
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,12 +20,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import team.illusion.data.model.Center
 import team.illusion.ui.member.date.DateAttendanceActivity
 import team.illusion.ui.member.info.MemberInfoActivity
 import team.illusion.ui.member.search.MemberSearchActivity
 import team.illusion.ui.theme.Team1llusionTheme
 import team.illusion.util.restartIntent
 import team.illusion.util.showToast
+
 
 
 @AndroidEntryPoint
@@ -81,6 +84,19 @@ class AdminActivity : ComponentActivity() {
                                     AdminEvent.DateAttendance -> {
                                         startActivity(DateAttendanceActivity.getIntent(this))
                                     }
+
+                                    AdminEvent.OpenCenterDialog -> {
+                                        AlertDialog
+                                            .Builder(this)
+                                            .setItems(
+                                                Center.values().map { it.centerName }
+                                                    .toTypedArray()
+                                            ) { _, choice ->
+                                                val selectedCenter = Center.values()[choice]
+                                                adminViewModel.updateCenter(selectedCenter)
+                                            }
+                                            .show()
+                                    }
                                 }
                             }
                         }
@@ -134,6 +150,7 @@ sealed interface AdminEvent {
     data class OverPasswordLimit(val limit: Int) : AdminEvent
 
     data class ChangePassword(val password: String) : AdminEvent
+    object OpenCenterDialog : AdminEvent
 
 }
 
@@ -142,6 +159,7 @@ sealed interface AuthorizeEvent {
 }
 
 data class AdminUiState(
+    val center: Center,
     val usePassword: Boolean,
     val password: String = "",
     val currentAdminEmail: String,

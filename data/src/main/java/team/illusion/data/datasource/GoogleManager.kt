@@ -1,4 +1,4 @@
-package team.illusion.data
+package team.illusion.data.datasource
 
 import android.content.Context
 import android.content.Intent
@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
+import team.illusion.data.R
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,7 +21,7 @@ class GoogleManager @Inject constructor(
 ) {
 
     private val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken(context.getString(team.illusion.data.R.string.default_web_client_id))
+        .requestIdToken(context.getString(R.string.default_web_client_id))
         .requestEmail()
         .build()
 
