@@ -25,8 +25,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import team.illusion.AlertManager
 import team.illusion.Sound
-import team.illusion.SoundManager
 import team.illusion.data.model.Count
 import team.illusion.data.model.Member
 import team.illusion.data.model.isExpireDate
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<MainViewModel>()
 
     @Inject
-    lateinit var soundManager: SoundManager
+    lateinit var alertManager: AlertManager
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -139,11 +139,11 @@ class MainActivity : ComponentActivity() {
                             }
                             VerifyEvent.Empty -> {
                                 showToast("데이터 없음")
-                                soundManager.play(Sound.Error)
+                                alertManager.play(Sound.Error)
                             }
                             is VerifyEvent.Error -> {
                                 showToast("${verifyEvent.t.message}")
-                                soundManager.play(Sound.Error)
+                                alertManager.play(Sound.Error)
 
                             }
                             is VerifyEvent.CheckIn -> {
@@ -158,7 +158,7 @@ class MainActivity : ComponentActivity() {
                                 showToast(message)
                                 openCheckInDialog.value = null
                                 sheetState.hide()
-                                soundManager.play(Sound.Confirm)
+                                alertManager.play(Sound.Confirm)
                             }
 
                             VerifyEvent.Logout -> showToast("logout")
