@@ -94,7 +94,7 @@ class MemberRepository @Inject constructor(
         editMember(
             member.copy(
                 remainCount = remainCount,
-                checkInDate = member.checkInDate + listOf(DateManager.today)
+                checkInDate = member.checkInDate + listOf(DateManager.today + "/" + DateManager.currentTime())
             )
         )
     }
@@ -114,7 +114,7 @@ class MemberRepository @Inject constructor(
                 "startDate" to member.startDate,
                 "endDate" to member.endDate,
                 "remainCount" to member.remainCount,
-                "checkInDate" to member.checkInDate
+                "checkInDate" to member.checkInDate,
             )
         ).await()
     }

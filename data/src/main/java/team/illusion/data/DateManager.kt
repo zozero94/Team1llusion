@@ -3,6 +3,7 @@ package team.illusion.data
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
@@ -53,5 +54,11 @@ object DateManager {
             set(Calendar.DAY_OF_MONTH, dayOfMonth)
         }
         return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+    }
+
+    fun currentTime(): String {
+        val currentTime = LocalTime.now()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        return currentTime.format(formatter)
     }
 }

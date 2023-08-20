@@ -15,7 +15,9 @@ class DateAttendanceViewModel @Inject constructor(
     private val dateChangeEvent = MutableStateFlow(DateManager.today)
 
     val members = combine(dateChangeEvent, memberRepository.bindMembers()) { date, members ->
-        members.filter { it.checkInDate.contains(date) }
+        members.filter { member ->
+            member.checkInDate.any { checkIn -> checkIn.contains(date) }
+        }
     }
 
 

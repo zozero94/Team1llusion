@@ -62,7 +62,7 @@ fun CheckInScreen(member: Member, deleteCheckIn: (String) -> Unit) {
                 Text(modifier = Modifier.fillMaxWidth(), text = "데이터 없음", textAlign = TextAlign.Center)
             }
         } else {
-            items(member.checkInDate) {
+            items(member.checkInDate) { checkIn ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -74,8 +74,8 @@ fun CheckInScreen(member: Member, deleteCheckIn: (String) -> Unit) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = it)
-                    IconButton(onClick = { openDialog.value = it }) {
+                    Text(text = checkIn)
+                    IconButton(onClick = { openDialog.value = checkIn }) {
                         Image(imageVector = Icons.Default.Close, contentDescription = null)
                     }
                 }
