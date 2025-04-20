@@ -1,7 +1,9 @@
+
 plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("dagger.hilt.android.plugin")
     id("kotlinx-serialization")
     id("kotlin-parcelize")
@@ -13,6 +15,12 @@ val gitCommitMessage = "git log --format=%s -n 1".execute().trim()
 fun String.execute(): String {
     val process = ProcessBuilder(split("\\s".toRegex())).redirectErrorStream(true).start()
     return process.inputStream.bufferedReader().readText()
+}
+kotlin {
+    compilerOptions {
+        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+    }
 }
 
 android {
@@ -43,11 +51,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
-    }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -88,4 +94,6 @@ dependencies {
     implementation(Dep.Dagger.android)
     kapt(Dep.Dagger.compiler)
     implementation(Dep.inject)
+    implementation(Dep.Compose.icons_core)
+    implementation(Dep.Compose.icons_extended)
 }

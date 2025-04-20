@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "team.illusion.data"
-    compileSdk = 33
+    compileSdk = 35
 
     defaultConfig {
         minSdk = Versions.minSdk
@@ -32,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 

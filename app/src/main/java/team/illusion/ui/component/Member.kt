@@ -3,7 +3,6 @@ package team.illusion.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,10 +62,7 @@ fun MemberColumn(
                         modifier = Modifier
                             .border(1.dp, color = Color(0xffBDBDBD), shape = RoundedCornerShape(12.dp))
                             .fillMaxWidth()
-                            .clickable(
-                                interactionSource = MutableInteractionSource(),
-                                indication = rememberRipple()
-                            ) { clickMember(member) }
+                            .clickable { clickMember(member) }
                             .padding(8.dp),
                         verticalArrangement = Arrangement.Center
                     ) {
